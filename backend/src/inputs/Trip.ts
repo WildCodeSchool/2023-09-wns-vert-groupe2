@@ -1,31 +1,31 @@
-import { Field, InputType } from "type-graphql";
+// import { Field, InputType } from "type-graphql";
 
-@InputType()
-export class TripInput {
-  @Field()
-  title: string;
+// @InputType()
+// export class TripInput {
+//   @Field()
+//   title: string;
 
-  @Field()
-  date: string;
+//   @Field()
+//   date: string;
 
-  @Field()
-  price: number;
+//   @Field()
+//   price: number;
 
-  @Field()
-  passengers: number;
+//   @Field()
+//   passengers: number;
 
-  @Field()
-  driverId: string;
+//   @Field()
+//   driverId: string;
 
-  @Field()
-  status: string;
+//   @Field()
+//   status: string;
 
-  @Field()
-  startLocation: string;
+//   @Field()
+//   startLocation: string;
 
-  @Field()
-  endLocation: string;
+//   @Field()
+//   endLocation: string;
 
-  @Field()
-  numberOfSeats: number;
-}
+//   @Field()
+//   numberOfSeats: number;
+// }

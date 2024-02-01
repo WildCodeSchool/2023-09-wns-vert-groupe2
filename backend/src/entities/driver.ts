@@ -1,28 +1,22 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { Trip } from "./trip";
-import { Field, ObjectType } from "type-graphql";
+// import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+// import { Trip } from "./trip";
+// import { Field, ObjectType } from "type-graphql";
 
-@ObjectType()
-@Entity()
-export class Driver extends BaseEntity {
-  @Field()
-  @PrimaryGeneratedColumn()
-  id: number;
+// @ObjectType()
+// @Entity()
+// export class Driver extends BaseEntity {
+//   @Field()
+//   @PrimaryGeneratedColumn()
+//   id: number;
 
-  @Field()
-  @Column()
-  car: string;
+//   @Field()
+//   @Column()
+//   car: string;
 
-  @Field()
-  @Column()
-  licenceNumber: number;
+//   @Field()
+//   @Column()
+//   licenceNumber: number;
 
-  @OneToMany(() => Trip, (trip) => trip.driver)
-  ads: Trip[];
-}
+//   @OneToMany(() => Trip, (trip) => trip.driver)
+//   ads: Trip[];
+// }
