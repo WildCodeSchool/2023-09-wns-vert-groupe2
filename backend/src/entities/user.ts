@@ -4,7 +4,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	ManyToMany,
+	// ManyToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
