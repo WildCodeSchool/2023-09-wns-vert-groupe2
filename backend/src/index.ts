@@ -6,22 +6,41 @@ import dataSource from '../config/db';
 import { UserResolver } from './resolvers/User';
 import { ReviewResolver } from './resolvers/Review';
 
+import jwt from 'jsonwebtoken';
+
 const start = async () => {
-  await dataSource.initialize();
+	await dataSource.initialize();
 
-  const schema = await buildSchema({
-    resolvers: [UserResolver, ReviewResolver],
-  });
+	const schema = await buildSchema({
+		resolvers: [UserResolver, ReviewResolver],
+	});
 
-  const server = new ApolloServer({
-    schema,
-  });
+	const server = new ApolloServer({
+		schema,
+	});
 
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
-  });
+	const { url } = await startStandaloneServer(server, {
+		listen: { port: 4000 },
+		context: async ({ req }) => {
+			let user = null;
 
-  console.log(`🚀  Server ready at: ${url}`);
+			const authorization = req.headers.authorization;
+
+			if (authorization) {
+				const token = authorization.replace('Bearer ', '');
+
+				try {
+					user = jwt.verify(token, 'jwtsecret');
+				} catch (error) {
+					console.error('Invalid token', error);
+				}
+			}
+
+			return { user };
+		},
+	});
+
+	console.log(`🚀  Server ready at: ${url}`);
 };
 
 start();
