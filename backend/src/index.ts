@@ -4,23 +4,24 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import dataSource from '../config/db';
 import { UserResolver } from './resolvers/User';
+import { ReviewResolver } from './resolvers/Review';
 
 const start = async () => {
-	await dataSource.initialize();
+  await dataSource.initialize();
 
-	const schema = await buildSchema({
-		resolvers: [UserResolver],
-	});
+  const schema = await buildSchema({
+    resolvers: [UserResolver, ReviewResolver],
+  });
 
-	const server = new ApolloServer({
-		schema,
-	});
+  const server = new ApolloServer({
+    schema,
+  });
 
-	const { url } = await startStandaloneServer(server, {
-		listen: { port: 4000 },
-	});
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+  });
 
-	console.log(`🚀  Server ready at: ${url}`);
+  console.log(`🚀  Server ready at: ${url}`);
 };
 
 start();
