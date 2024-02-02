@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Navbar from "./Navbar";
 
 export default function Layout({ children }: { children: any }) {
   return (
@@ -19,6 +20,7 @@ export default function Layout({ children }: { children: any }) {
             margin: "30vh 0",
           }}
         >
+          <Navbar />
           {children}
         </div>
       </main>
