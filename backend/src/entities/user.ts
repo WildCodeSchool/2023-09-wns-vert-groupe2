@@ -16,9 +16,9 @@ import {
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-	@Field()
-	@PrimaryGeneratedColumn()
-	id: number;
+  @Field()
+  @PrimaryGeneratedColumn()
+  id: number;
 
 	@Field()
 	@Column({ unique: true })
