@@ -4,11 +4,11 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-	@Field()
-	@PrimaryGeneratedColumn()
-	id: number;
+  @Field()
+  @PrimaryGeneratedColumn()
+  id: number;
 
-	@Field()
-	@Column({ unique: true })
-	email: string;
+  @Field()
+  @Column({ unique: true })
+  email: string;
 }
