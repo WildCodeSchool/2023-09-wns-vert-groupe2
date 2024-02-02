@@ -5,20 +5,20 @@ import {
 	CreateDateColumn,
 	Entity,
 	OneToMany,
-	// ManyToMany,
+	ManyToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 
-// import { Trip } from './trip';
-// import { Review } from './review';
+import { Trip } from './trip';
+import { Review } from './review';
 
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-  @Field()
-  @PrimaryGeneratedColumn()
-  id: number;
+	@Field()
+	@PrimaryGeneratedColumn()
+	id: number;
 
 	@Field()
 	@Column({ unique: true })
@@ -57,17 +57,15 @@ export class User extends BaseEntity {
 	})
 	isAdmin: boolean;
 
-	// @Field(() => [Trip])
-	// @JoinTable()
-	// @ManyToMany(() => Trip, (trip) => trip.passengers, { onDelete: 'CASCADE' })
-	// trips: Trip[];
+	@Field(() => [Trip])
+	@ManyToMany(() => Trip, (trip) => trip.passengers, { onDelete: 'CASCADE' })
+	trips: Trip[];
 
-	// @Field(() => [Review])
-	// @JoinTable()
-	// @OneToMany(() => Review, (review) => review.user, {
-	// 	onDelete: 'CASCADE',
-	// })
-	// reviews: Review[];
+	@Field(() => [Review])
+	@OneToMany(() => Review, (review) => review.user, {
+		onDelete: 'CASCADE',
+	})
+	reviews: Review[];
 
 	@CreateDateColumn()
 	@Field()
