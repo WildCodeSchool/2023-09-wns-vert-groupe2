@@ -4,6 +4,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	OneToMany,
 	// ManyToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
@@ -63,7 +64,7 @@ export class User extends BaseEntity {
 
 	// @Field(() => [Review])
 	// @JoinTable()
-	// @ManyToMany(() => Review, (review) => review.passengers, {
+	// @OneToMany(() => Review, (review) => review.user, {
 	// 	onDelete: 'CASCADE',
 	// })
 	// reviews: Review[];
