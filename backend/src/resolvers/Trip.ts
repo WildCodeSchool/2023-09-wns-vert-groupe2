@@ -12,7 +12,7 @@ export class TripResolver {
     return Trip.find();
   }
 
-  // Ici c pour créer un nouveau voyage avec les données fournies
+  // Ici c pour créer un nouveau voyage avec les données fournies.
   @Mutation(() => Trip)
   async createTrip(@Arg("data") data: TripInput): Promise<Trip> {
     const trip = Trip.create({
