@@ -20,6 +20,6 @@ export class TripUpdateInput {
   @Field({ nullable: true })
   endLocation?: string;
 
-  @Field({ nullable: true })
-  passengers?: string;
+  @Field(() => [String], { nullable: true })
+  passengers?: string[];
 }
