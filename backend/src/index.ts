@@ -7,6 +7,8 @@ import { UserResolver } from "./resolvers/User";
 import { ReviewResolver } from "./resolvers/Review";
 import { TripResolver } from "./resolvers/Trip";
 
+import jwt from "jsonwebtoken";
+
 const start = async () => {
   await dataSource.initialize();
 
@@ -20,6 +22,23 @@ const start = async () => {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
+    context: async ({ req }) => {
+      let user = null;
+
+      const authorization = req.headers.authorization;
+
+      if (authorization) {
+        const token = authorization.replace("Bearer ", "");
+
+        try {
+          user = jwt.verify(token, "jwtsecret");
+        } catch (error) {
+          console.error("Invalid token", error);
+        }
+      }
+
+      return { user };
+    },
   });
 
   console.log(`🚀  Server ready at: ${url}`);
