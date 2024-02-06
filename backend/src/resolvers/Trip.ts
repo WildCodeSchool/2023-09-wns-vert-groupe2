@@ -2,8 +2,8 @@ import { Resolver, Mutation, Arg, Query, Ctx } from "type-graphql";
 import { Trip } from "../entities/trip";
 import { TripInput } from "../inputs/Trip";
 import { TripUpdateInput } from "../inputs/TripUpdate";
-// import { User } from "../entities/user";
 import { UserContext } from "../types/User";
+// import { User } from "../entities/user";
 
 @Resolver()
 export class TripResolver {
