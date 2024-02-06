@@ -30,6 +30,7 @@ export class Review extends BaseEntity {
   type: string;
 
   @ManyToOne(() => User, (user) => user.reviews)
+  @Field(() => User)
   user: User;
 
   @CreateDateColumn()
@@ -39,4 +40,7 @@ export class Review extends BaseEntity {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
+
+  @Column({ nullable: true })
+  userId: number;
 }

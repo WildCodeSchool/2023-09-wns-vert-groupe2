@@ -7,72 +7,74 @@ import { Arg, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 @ObjectType()
 @Resolver()
 export class UserResolver {
-	@Mutation(() => AuthenticatedUser)
-	async register(@Arg('input') input: UserRegisterInput) {
-		const alreadyExists = await User.findOne({
-			where: {
-				email: input.email,
-			},
-		});
+  @Mutation(() => AuthenticatedUser)
+  async register(@Arg('input') input: UserRegisterInput) {
+    const alreadyExists = await User.findOne({
+      where: {
+        email: input.email,
+      },
+    });
 
-		if (alreadyExists) {
-			throw new Error('User already exists !');
-		}
+    if (alreadyExists) {
+      throw new Error('User already exists !');
+    }
 
-		const user = await User.save({
-			email: input.email,
-			password: await hashPassword(input.password),
-			firstname: '',
-			lastname: '',
-			description: '',
-			pictureUrl: '',
-			birthdate: new Date(),
-			phoneNumber: '',
-		});
+    const user = await User.save({
+      email: input.email,
+      password: await hashPassword(input.password),
+      firstname: '',
+      lastname: '',
+      description: '',
+      pictureUrl: '',
+      birthdate: new Date(),
+      phoneNumber: '',
+    });
 
-		const token = createJwt(user);
+    const token = createJwt(user);
 
-		return { user, token };
-	}
+    return { user, token };
+  }
 
-	@Mutation(() => AuthenticatedUser)
-	async login(@Arg('input') input: UserLoginInput) {
-		const user = await User.findOne({
-			where: {
-				email: input.email,
-			},
-		});
+  @Mutation(() => AuthenticatedUser)
+  async login(@Arg('input') input: UserLoginInput) {
+    const user = await User.findOne({
+      where: {
+        email: input.email,
+      },
+    });
 
-		if (!user) {
-			throw new Error('User not found!');
-		}
+    if (!user) {
+      throw new Error('User not found!');
+    }
 
-		const passwordIsValid = await comparePasswords(
-			user.password,
-			input.password
-		);
+    const passwordIsValid = await comparePasswords(
+      user.password,
+      input.password
+    );
 
-		if (!passwordIsValid) {
-			throw new Error('Invalid credentials !');
-		}
+    if (!passwordIsValid) {
+      throw new Error('Invalid credentials !');
+    }
 
-		const token = createJwt(user);
+    const token = createJwt(user);
 
-		return { user, token };
-	}
+    return { user, token };
+  }
 
-	@Query(() => User)
-	async me(@Ctx() ctx: UserContext) {
-		if (!ctx.user) {
-			throw new Error('Not authenticated !');
-		}
+  @Query(() => User)
+  async me(@Ctx() ctx: UserContext) {
+    if (!ctx.user) {
+      throw new Error('Not authenticated !');
+    }
 
-		const authenticatedUser = await User.findOne({
-			where: {
-				id: ctx.user.id,
-			},
-		});
+    const authenticatedUser = await User.findOne({
+      where: {
+        id: ctx.user.id,
+      },
+    });
 
-		return authenticatedUser;
-	}
+    return authenticatedUser;
+  }
 }
+
+export { UserContext };
