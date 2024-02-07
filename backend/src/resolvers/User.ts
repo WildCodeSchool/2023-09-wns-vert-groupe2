@@ -1,5 +1,9 @@
 import { User } from '../entities/user';
-import { UserRegisterInput, UserLoginInput } from '../inputs/User';
+import {
+	UserRegisterInput,
+	UserLoginInput,
+	UserUpdateMe,
+} from '../inputs/User';
 import { AuthenticatedUser, UserContext } from '../types/User';
 import { comparePasswords, createJwt, hashPassword } from '../utils/auth';
 import { Arg, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
@@ -8,7 +12,9 @@ import { Arg, Ctx, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 @Resolver()
 export class UserResolver {
 	@Mutation(() => AuthenticatedUser)
-	async register(@Arg('input') input: UserRegisterInput) {
+	async register(
+		@Arg('input') input: UserRegisterInput
+	): Promise<AuthenticatedUser> {
 		try {
 			const alreadyExists = await User.findOne({
 				where: {
@@ -70,7 +76,7 @@ export class UserResolver {
 	}
 
 	@Query(() => User)
-	async me(@Ctx() ctx: UserContext) {
+	async me(@Ctx() ctx: UserContext): Promise<User> {
 		if (!ctx.user) {
 			throw new Error('Not authenticated !');
 		}
@@ -82,9 +88,69 @@ export class UserResolver {
 				},
 			});
 
+			if (!authenticatedUser) {
+				throw new Error('Error fetching user.');
+			}
+
 			return authenticatedUser;
 		} catch (error) {
 			throw new Error('Failed to fetch my informations: ' + error.message);
+		}
+	}
+
+	@Mutation(() => User)
+	async updateMe(@Arg('input') input: UserUpdateMe, @Ctx() ctx: UserContext) {
+		if (!ctx.user) {
+			throw new Error('Not authenticated !');
+		}
+
+		try {
+			const userToUpdate = await User.findOne({
+				where: {
+					id: ctx.user.id,
+				},
+			});
+
+			const newUser = User.save({
+				...userToUpdate,
+				...input,
+			});
+
+			return newUser;
+		} catch (error) {
+			throw new Error('Failed to update me: ' + error.message);
+		}
+	}
+
+	@Mutation(() => String)
+	async deleteMe(@Ctx() ctx: UserContext) {
+		if (!ctx.user) {
+			throw new Error('Not authenticated !');
+		}
+
+		try {
+			await User.delete(ctx.user.id);
+
+			return `User #${ctx.user.id} - ${ctx.user.email} deleted !`;
+		} catch (error) {
+			throw new Error('Failed to delete me: ' + error.message);
+		}
+	}
+
+	@Query(() => User)
+	async getUserById(@Arg('id') id: number) {
+		try {
+			const user = await User.findOne({
+				where: {
+					id,
+				},
+			});
+
+			if (!user) throw new Error('User not found !');
+
+			return user;
+		} catch (error) {
+			throw new Error('Failed to fetch user: ' + error.message);
 		}
 	}
 }
