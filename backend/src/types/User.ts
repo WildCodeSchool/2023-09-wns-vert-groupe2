@@ -13,5 +13,10 @@ export class AuthenticatedUser {
 @ObjectType()
 export class UserContext {
 	@Field(() => User)
-	user: User;
+	user: {
+		id: number;
+		email: string;
+		isAdmin: boolean;
+		iat: number;
+	};
 }
