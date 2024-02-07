@@ -1,24 +1,56 @@
-import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, Int, Ctx } from 'type-graphql';
 import { Review } from '../entities/review';
+import { UserContext } from './User';
+import { User } from '../entities/user';
 
 @Resolver()
 export class ReviewResolver {
   @Query(() => [Review])
   async reviews(): Promise<Review[]> {
-    const reviews = await Review.find();
-    return reviews;
+    return await Review.find();
   }
+
+  @Query(() => [Review])
+  async reviewsForUser(
+    @Arg('userId', () => Int) userId: number
+  ): Promise<Review[]> {
+    return await Review.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async deleteReview(
+    @Arg('reviewId', () => Int) reviewId: number
+  ): Promise<Boolean> {
+    try {
+      const review = await Review.findOne({ where: { id: reviewId } });
+      if (!review) throw new Error('Review not found!');
+      await Review.remove(review);
+      return true;
+    } catch (error) {
+      console.error('Failed to delete review:', error);
+      return false;
+    }
+  }
+
   @Mutation(() => Review)
   async createReview(
     @Arg('rating', () => Int) rating: number,
-    @Arg('comment') comment: string
+    @Arg('comment') comment: string,
+    @Ctx() ctx: UserContext
   ): Promise<Review> {
-    if (rating < 1 || rating > 5) {
-      throw new Error('The rating must be between 1 and 5.');
-    }
+    if (!ctx.user) throw new Error('Not authenticated!');
+    const user = await User.findOne({ where: { id: ctx.user.id } });
+    if (!user) throw new Error('User not found!');
     const review = new Review();
     review.rating = rating;
     review.comment = comment;
+    review.user = user;
     await review.save();
     return review;
   }

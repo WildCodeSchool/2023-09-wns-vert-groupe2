@@ -30,6 +30,7 @@ export class Review extends BaseEntity {
   type: string;
 
   @ManyToOne(() => User, (user) => user.reviews)
+  @Field(() => User)
   user: User;
 
   @CreateDateColumn()
