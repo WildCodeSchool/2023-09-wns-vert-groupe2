@@ -1,46 +1,47 @@
-import 'reflect-metadata';
-import { buildSchema } from 'type-graphql';
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import dataSource from '../config/db';
-import { UserResolver } from './resolvers/User';
-import { ReviewResolver } from './resolvers/Review';
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import dataSource from "../config/db";
+import { UserResolver } from "./resolvers/User";
+import { ReviewResolver } from "./resolvers/Review";
+import { TripResolver } from "./resolvers/Trip";
 
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 const start = async () => {
-	await dataSource.initialize();
+  await dataSource.initialize();
 
-	const schema = await buildSchema({
-		resolvers: [UserResolver, ReviewResolver],
-	});
+  const schema = await buildSchema({
+    resolvers: [UserResolver, ReviewResolver, TripResolver],
+  });
 
-	const server = new ApolloServer({
-		schema,
-	});
+  const server = new ApolloServer({
+    schema,
+  });
 
-	const { url } = await startStandaloneServer(server, {
-		listen: { port: 4000 },
-		context: async ({ req }) => {
-			let user = null;
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: 4000 },
+    context: async ({ req }) => {
+      let user = null;
 
-			const authorization = req.headers.authorization;
+      const authorization = req.headers.authorization;
 
-			if (authorization) {
-				const token = authorization.replace('Bearer ', '');
+      if (authorization) {
+        const token = authorization.replace("Bearer ", "");
 
-				try {
-					user = jwt.verify(token, 'jwtsecret');
-				} catch (error) {
-					console.error('Invalid token', error);
-				}
-			}
+        try {
+          user = jwt.verify(token, "jwtsecret");
+        } catch (error) {
+          console.error("Invalid token", error);
+        }
+      }
 
-			return { user };
-		},
-	});
+      return { user };
+    },
+  });
 
-	console.log(`🚀  Server ready at: ${url}`);
+  console.log(`🚀  Server ready at: ${url}`);
 };
 
 start();

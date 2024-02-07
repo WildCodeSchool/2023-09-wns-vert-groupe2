@@ -51,7 +51,7 @@ export class Trip extends BaseEntity {
 
   @Field()
   @Column()
-  driver: string;
+  driver: number;
 
   @CreateDateColumn()
   @Field()

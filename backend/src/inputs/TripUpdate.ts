@@ -22,4 +22,7 @@ export class TripUpdateInput {
 
   @Field(() => [String], { nullable: true })
   passengers?: string[];
+
+  // @Field({ nullable: true })
+  // driver?: number;
 }
