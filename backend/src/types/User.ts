@@ -20,3 +20,11 @@ export class UserContext {
 		iat: number;
 	};
 }
+
+@ObjectType()
+export class UserContextV2 {
+	id: number;
+	email: string;
+	isAdmin: boolean;
+	iat: number;
+}

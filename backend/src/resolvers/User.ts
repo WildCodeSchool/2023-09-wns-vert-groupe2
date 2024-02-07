@@ -1,3 +1,4 @@
+import { checkIfRegistered } from '../utils/checker';
 import { User } from '../entities/user';
 import {
 	UserRegisterInput,
@@ -77,15 +78,14 @@ export class UserResolver {
 
 	@Query(() => User)
 	async me(@Ctx() ctx: UserContext): Promise<User> {
-		if (!ctx.user) {
-			throw new Error('Not authenticated !');
-		}
+		checkIfRegistered(ctx.user);
 
 		try {
 			const authenticatedUser = await User.findOne({
 				where: {
 					id: ctx.user.id,
 				},
+				relations: ['reviews', 'trips'],
 			});
 
 			if (!authenticatedUser) {
@@ -100,9 +100,7 @@ export class UserResolver {
 
 	@Mutation(() => User)
 	async updateMe(@Arg('input') input: UserUpdateMe, @Ctx() ctx: UserContext) {
-		if (!ctx.user) {
-			throw new Error('Not authenticated !');
-		}
+		checkIfRegistered(ctx.user);
 
 		try {
 			const userToUpdate = await User.findOne({
@@ -124,9 +122,7 @@ export class UserResolver {
 
 	@Mutation(() => String)
 	async deleteMe(@Ctx() ctx: UserContext) {
-		if (!ctx.user) {
-			throw new Error('Not authenticated !');
-		}
+		checkIfRegistered(ctx.user);
 
 		try {
 			await User.delete(ctx.user.id);
