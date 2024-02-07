@@ -96,4 +96,28 @@ export class TripResolver {
       throw error;
     }
   }
+
+  @Query(() => [Trip])
+  async getTripsByDateAndLocations(
+    @Arg("date") date: Date,
+    @Arg("startLocation") startLocation: string,
+    @Arg("stopLocations") stopLocations: string
+  ): Promise<Trip[]> {
+    try {
+      const trips = await Trip.find({
+        where: {
+          date,
+          startLocation,
+          stopLocations,
+        },
+      });
+      return trips;
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la récupération des voyages :",
+        error
+      );
+      throw error;
+    }
+  }
 }

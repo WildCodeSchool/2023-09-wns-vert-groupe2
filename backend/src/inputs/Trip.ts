@@ -22,4 +22,7 @@ export class TripInput {
 
   @Field(() => [String])
   passengers: string[];
+
+  @Field()
+  driver: string;
 }
