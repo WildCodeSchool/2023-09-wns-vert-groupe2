@@ -3,7 +3,7 @@ import { Trip } from "../entities/trip";
 import { TripInput } from "../inputs/Trip";
 import { TripUpdateInput } from "../inputs/TripUpdate";
 import { UserContext } from "../types/User";
-// import { User } from "../entities/user";
+import { User } from "../entities/user";
 
 @Resolver()
 export class TripResolver {
@@ -11,7 +11,7 @@ export class TripResolver {
   async trips(): Promise<Trip[]> {
     try {
       // Ici c pour récupérer tous les voyages depuis la base de données
-      return Trip.find();
+      return Trip.find({ relations: ["passengers"] });
     } catch (error) {
       console.error(
         "Une erreur s'est produite lors de la récupération des voyages :",
@@ -31,18 +31,21 @@ export class TripResolver {
       throw new Error("Not authenticated!");
     }
     try {
-      const trip = Trip.create({
-        date: data.date,
-        price: data.price,
-        status: data.status,
-        startLocation: data.startLocation,
-        stopLocations: data.stopLocations,
-        endLocation: data.endLocation,
-        passengers: [],
-        driver: ctx.user.id,
+      const user = await User.findOne({
+        where: {
+          id: ctx.user.id,
+        },
       });
-      // trip.passengers = await User.findByIds(data.passengers);
-      return await trip.save();
+
+      if (!user) throw new Error("User not found!");
+
+      const trip = await Trip.save({
+        ...data,
+        driver: ctx.user.id,
+        passengers: [user],
+      });
+
+      return trip;
     } catch (error) {
       console.error(
         "Une erreur s'est produite lors de la création du voyage :",
