@@ -40,7 +40,4 @@ export class Review extends BaseEntity {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
-
-  @Column({ nullable: true })
-  userId: number;
 }

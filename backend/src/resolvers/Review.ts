@@ -14,7 +14,13 @@ export class ReviewResolver {
   async reviewsForUser(
     @Arg('userId', () => Int) userId: number
   ): Promise<Review[]> {
-    return await Review.find({ where: { userId } });
+    return await Review.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
   }
 
   @Mutation(() => Boolean)
