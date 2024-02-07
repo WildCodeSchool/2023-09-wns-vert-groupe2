@@ -17,3 +17,23 @@ export class UserLoginInput {
 	@Field()
 	password: string;
 }
+
+@InputType()
+export class UserUpdateMe {
+	@Field()
+	firstname: string;
+	@Field()
+	lastname: string;
+
+	@Field()
+	description: string;
+
+	@Field()
+	pictureUrl: string;
+
+	@Field()
+	birthdate: Date;
+
+	@Field()
+	phoneNumber: string;
+}
