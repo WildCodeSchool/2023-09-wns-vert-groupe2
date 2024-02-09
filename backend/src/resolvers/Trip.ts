@@ -101,17 +101,21 @@ export class TripResolver {
   }
 
   @Query(() => [Trip])
-  async getTripsByDateAndLocations(
-    @Arg("date") date: Date,
+  async getTripsByVoyage(
     @Arg("startLocation") startLocation: string,
-    @Arg("stopLocations") stopLocations: string
+    @Arg("endLocation") endLocation: string,
+    @Arg("departTime") departTime: Date,
+    @Arg("arrivalTime") arrivalTime: Date,
+    @Arg("date") date: Date
   ): Promise<Trip[]> {
     try {
       const trips = await Trip.find({
         where: {
-          date,
           startLocation,
-          stopLocations,
+          endLocation,
+          departTime,
+          arrivalTime,
+          date,
         },
       });
       return trips;

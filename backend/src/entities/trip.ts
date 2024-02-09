@@ -36,11 +36,19 @@ export class Trip extends BaseEntity {
 
   @Field()
   @Column()
+  departTime: Date;
+
+  @Field()
+  @Column()
   stopLocations: string;
 
   @Field()
   @Column()
   endLocation: string;
+
+  @Field()
+  @Column()
+  arrivalTime: Date;
 
   @Field(() => [User])
   @ManyToMany(() => User, (user) => user.trips, {

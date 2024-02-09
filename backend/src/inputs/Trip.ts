@@ -15,10 +15,16 @@ export class TripInput {
   startLocation: string;
 
   @Field()
+  departTime: Date;
+
+  @Field()
   stopLocations: string;
 
   @Field()
   endLocation: string;
+
+  @Field()
+  arrivalTime: Date;
 
   // @Field(() => [String])
   // passengers: string[];

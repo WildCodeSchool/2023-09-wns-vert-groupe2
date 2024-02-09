@@ -15,10 +15,16 @@ export class TripUpdateInput {
   startLocation?: string;
 
   @Field({ nullable: true })
+  departTime: Date;
+
+  @Field({ nullable: true })
   stopLocations?: string;
 
   @Field({ nullable: true })
   endLocation?: string;
+
+  @Field({ nullable: true })
+  arrivalTime: Date;
 
   @Field(() => [String], { nullable: true })
   passengers?: string[];
