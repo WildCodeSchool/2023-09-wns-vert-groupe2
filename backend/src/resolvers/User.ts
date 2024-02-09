@@ -4,6 +4,7 @@ import {
 	UserRegisterInput,
 	UserLoginInput,
 	UserUpdateMe,
+	UserChangePassword,
 } from '../inputs/User';
 import { AuthenticatedUser, UserContext } from '../types/User';
 import { comparePasswords, createJwt, hashPassword } from '../utils/auth';
@@ -47,7 +48,7 @@ export class UserResolver {
 	}
 
 	@Mutation(() => AuthenticatedUser)
-	async login(@Arg('input') input: UserLoginInput) {
+	async login(@Arg('input') input: UserLoginInput): Promise<AuthenticatedUser> {
 		try {
 			const user = await User.findOne({
 				where: {
@@ -99,7 +100,10 @@ export class UserResolver {
 	}
 
 	@Mutation(() => User)
-	async updateMe(@Arg('input') input: UserUpdateMe, @Ctx() ctx: UserContext) {
+	async updateMe(
+		@Arg('input') input: UserUpdateMe,
+		@Ctx() ctx: UserContext
+	): Promise<User> {
 		checkIfRegistered(ctx.user);
 
 		try {
@@ -109,7 +113,11 @@ export class UserResolver {
 				},
 			});
 
-			const newUser = User.save({
+			if (!userToUpdate) {
+				throw new Error('User not found !');
+			}
+
+			const newUser = await User.save({
 				...userToUpdate,
 				...input,
 			});
@@ -121,7 +129,7 @@ export class UserResolver {
 	}
 
 	@Mutation(() => String)
-	async deleteMe(@Ctx() ctx: UserContext) {
+	async deleteMe(@Ctx() ctx: UserContext): Promise<String> {
 		checkIfRegistered(ctx.user);
 
 		try {
@@ -134,7 +142,7 @@ export class UserResolver {
 	}
 
 	@Query(() => User)
-	async getUserById(@Arg('id') id: number) {
+	async getUserById(@Arg('id') id: number): Promise<User> {
 		try {
 			const user = await User.findOne({
 				where: {
@@ -147,6 +155,41 @@ export class UserResolver {
 			return user;
 		} catch (error) {
 			throw new Error('Failed to fetch user: ' + error.message);
+		}
+	}
+
+	@Mutation(() => User)
+	async changeMyPassword(
+		@Arg('input') input: UserChangePassword,
+		@Ctx() ctx: UserContext
+	): Promise<User> {
+		checkIfRegistered(ctx.user);
+
+		try {
+			const userToUpdate = await User.findOne({
+				where: {
+					id: ctx.user.id,
+				},
+			});
+
+			if (!userToUpdate) {
+				throw new Error('User not found !');
+			}
+
+			let passwordIsValid = input.password === input.repeatedPassword;
+
+			if (!passwordIsValid) {
+				throw new Error('Passwords does not match !');
+			}
+
+			const newUser = await User.save({
+				...userToUpdate,
+				password: await hashPassword(input.password),
+			});
+
+			return newUser;
+		} catch (error) {
+			throw new Error('Failed to change password: ' + error.message);
 		}
 	}
 }
