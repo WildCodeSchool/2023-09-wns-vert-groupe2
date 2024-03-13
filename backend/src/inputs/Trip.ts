@@ -20,6 +20,9 @@ export class TripInput {
   @Field()
   endLocation: string;
 
-  @Field(() => [String])
-  passengers: string[];
+  // @Field(() => [String])
+  // passengers: string[];
+
+  // @Field()
+  // driver: number;
 }
