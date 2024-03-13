@@ -22,6 +22,40 @@ export class UserLoginInput {
 export class UserUpdateMe {
 	@Field()
 	firstname: string;
+
+	@Field()
+	lastname: string;
+
+	@Field()
+	description: string;
+
+	@Field()
+	pictureUrl: string;
+
+	@Field()
+	birthdate: Date;
+
+	@Field()
+	phoneNumber: string;
+}
+
+@InputType()
+export class UserChangePassword {
+	@Field()
+	password: string;
+
+	@Field()
+	repeatedPassword: string;
+}
+
+@InputType()
+export class UserUpdateAdmin {
+	@Field()
+	email: string;
+
+	@Field()
+	firstname: string;
+
 	@Field()
 	lastname: string;
 

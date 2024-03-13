@@ -6,14 +6,14 @@ import dataSource from "../config/db";
 import { UserResolver } from "./resolvers/User";
 import { ReviewResolver } from "./resolvers/Review";
 import { TripResolver } from "./resolvers/Trip";
-
+import { UserAdminResolver } from './resolvers/UserAdmin';
 import jwt from "jsonwebtoken";
 
 const start = async () => {
   await dataSource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [UserResolver, ReviewResolver, TripResolver],
+    resolvers: [UserResolver, ReviewResolver, TripResolver, UserAdminResolver],
   });
 
   const server = new ApolloServer({
