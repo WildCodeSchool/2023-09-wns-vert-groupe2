@@ -1,8 +1,7 @@
 {
-  "name": "godrive-front",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,25 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.1",
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
-    "@fontsource-variable/assistant": "^5.0.16",
-    "@mui/icons-material": "^5.15.7",
-    "@mui/material": "^5.15.7",
-    "graphql": "^16.8.1",
     "next": "14.1.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "react-icon": "^1.0.0",
-    "react-toast": "^1.0.3"
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0",
-    "typescript": "^5"
+    "@types/react": "18.2.48",
+    "eslint": "8.56.0",
+    "eslint-config-next": "14.1.0"
   }
 }
