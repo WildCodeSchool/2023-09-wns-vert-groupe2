@@ -1,4 +1,4 @@
-import { TripUpdateInput } from "../src/inputs/TripUpdate";
+import { TripUpdateInput } from "../src/inputs/TripUpdate"; //trip dans le dossier inputs
 
 describe("TripUpdateInput", () => {
   it("should create a new instance of TripUpdateInput", () => {

@@ -1,4 +1,4 @@
-import { TripResolver } from "../src/resolvers/Trip";
+import { TripResolver } from "../src/resolvers/Trip"; //trip dans le dossier resolvers
 import { TripInput } from "../src/inputs/Trip";
 
 describe("TripResolver", () => {
