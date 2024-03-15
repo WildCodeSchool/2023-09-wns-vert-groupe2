@@ -1,14 +1,21 @@
-import { TripResolver } from "../src/resolvers/Trip"; //trip dans le dossier resolvers
+import "reflect-metadata";
+import { TripResolver } from "../src/resolvers/Trip";
 import { TripInput } from "../src/inputs/Trip";
+import { UserContext } from "../src/types/User";
 
 describe("TripResolver", () => {
   describe("createTrip", () => {
     it("should create a new trip", async () => {
-      const mockContext = {
+      const tripResolver = new TripResolver();
+      const mockContext: UserContext = {
         user: {
           id: 1,
+          email: "example@example.com",
+          isAdmin: true,
+          iat: 1234567890,
         },
       };
+
       const tripInput: TripInput = {
         date: new Date(),
         price: 100,
@@ -18,7 +25,7 @@ describe("TripResolver", () => {
         endLocation: "End",
       };
 
-      const createdTrip = await TripResolver.createTrip(tripInput, mockContext);
+      const createdTrip = await tripResolver.createTrip(tripInput, mockContext);
       expect(createdTrip).toBeDefined();
     });
   });
