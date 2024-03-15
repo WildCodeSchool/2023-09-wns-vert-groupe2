@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { TripInput } from "../src/inputs/Trip"; //trip dans le dossier inputs
 
 describe("TripInput", () => {
