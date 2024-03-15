@@ -11,17 +11,15 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const pages = [
-  { label: "Trouver un trajet", url: "/journeys" },
-  { label: "Proposer un trajet", url: "/journeys/create" },
+  { label: "Trouver un trajet", url: "/trips" },
+  { label: "Proposer un trajet", url: "/trips/create" },
 ];
 const settings = [
   { label: "Mon compte", url: "/account" },
-  { label: "Mes trajets", url: "/account/journey" },
+  { label: "Mes trajets", url: "/account/trips" },
   { label: "Logout", url: "/" },
 ];
 
@@ -50,10 +48,25 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar>
+    <AppBar sx={{ bgcolor: "#114360" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              display: { xs: "none", md: "flex" },
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            GoD
+          </Typography>
           <Typography
             variant="h6"
             noWrap
@@ -65,11 +78,11 @@ export default function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#54F49A",
               textDecoration: "none",
             }}
           >
-            GoDrive
+            rive
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -112,9 +125,25 @@ export default function Navbar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant="h4"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              display: { xs: "flex", md: "none" },
+
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            GoD
+          </Typography>
+          <Typography
+            variant="h4"
             noWrap
             component="a"
             href="/"
@@ -125,24 +154,34 @@ export default function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#54F49A",
               textDecoration: "none",
             }}
           >
-            GoDrive
+            rive
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "end",
+            }}
+          >
             {pages.map((page, index) => (
               <Button
                 key={index}
                 onClick={() => router.push(`/${page.url}`)}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  mx: "5 rem",
+                  color: "white",
+                  display: "block",
+                }}
               >
                 <Typography textAlign="center">{page.label}</Typography>
               </Button>
             ))}
           </Box>
-
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Ouvrir les paramètres">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

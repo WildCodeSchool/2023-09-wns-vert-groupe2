@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 export default function Layout({ children }: { children: any }) {
   return (
@@ -17,11 +18,12 @@ export default function Layout({ children }: { children: any }) {
             alignItems: "center",
             justifyContent: "center",
             flexDirection: "column",
-            margin: "30vh 0",
+            margin: "15vh 0",
           }}
         >
           <Navbar />
           {children}
+          <Footer />
         </div>
       </main>
     </>

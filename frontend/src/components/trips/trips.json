@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "date": "2024-02-08",
+    "price": 50,
+    "status": "scheduled",
+    "startLocation": "Strasbourg",
+    "departTime": "2024-02-08T08:00:00",
+    "arrivalTime": "2024-02-08T12:00:00",
+    "endLocation": "Paris",
+    "passengers": ["Passager1", "Passager2"],
+    "driver": "Lorène Ipsum"
+  },
+  {
+    "id": 2,
+    "date": "2024-02-08",
+    "price": 60,
+    "status": "scheduled",
+    "startLocation": "Strasbourg",
+    "departTime": "2024-02-08T09:00:00",
+    "arrivalTime": "2024-02-08T13:45:00",
+    "endLocation": "Paris",
+    "passengers": ["Passager3"],
+    "driver": "Vin Gazoil"
+  },
+  {
+    "id": 3,
+    "date": "2024-02-08",
+    "price": 55,
+    "status": "scheduled",
+    "startLocation": "Strasbourg",
+    "departTime": "2024-02-08T10:00:00",
+    "arrivalTime": "2024-02-08T14:00:00",
+    "endLocation": "Paris",
+    "passengers": ["Passager4"],
+    "driver": "Max Verstappen"
+  },
+  {
+    "id": 4,
+    "date": "2024-02-08",
+    "price": 70,
+    "status": "scheduled",
+    "startLocation": "Strasbourg",
+    "departTime": "2024-02-08T11:00:00",
+    "arrivalTime": "2024-02-08T15:00:00",
+    "endLocation": "Paris",
+    "passengers": ["Passager5", "Passager6"],
+    "driver": "Pierre Chabrier"
+  }
+]
