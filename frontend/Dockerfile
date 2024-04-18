@@ -1,5 +1,7 @@
 FROM node:lts-alpine
 
+RUN apk --no-cache add curl
+
 WORKDIR /app
 
 COPY package.json package.json
@@ -12,4 +14,4 @@ COPY tsconfig.json tsconfig.json
 
 COPY src src
 
-CMD npm run dev
+RUN npm run build
