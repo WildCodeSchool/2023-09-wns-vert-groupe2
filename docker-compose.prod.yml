@@ -4,6 +4,7 @@ services:
   server:
     image: groupevert/wns-deploy-server
     command: sh -c "npm run build && npm run startprod"
+    platform: linux/amd64
     expose:
       - 5000
     environment:
@@ -12,8 +13,6 @@ services:
     depends_on:
       - db
   client:
-    # build: ./client
-    # To replace with the correct path of your client image
     image: groupevert/wns-deploy-client
     command: sh -c "npm run build"
     volumes:
@@ -22,8 +21,10 @@ services:
     environment:
       - NODE_ENV=production
   db:
-    image: postgres
+    image: postgres:latest
     restart: always
+    platform: linux/amd64
+
     environment:
       POSTGRES_PASSWORD: example
     healthcheck:
@@ -36,15 +37,19 @@ services:
 
   nginx:
     image: nginx:1.21.3
+    platform: linux/amd64
+    ports:
+      - mode: host
+        target: 80
+        published: ${GATEWAY_PORT}
+        protocol: tcp
+
     depends_on:
       - server
       - client
     restart: always
-    ports:
-      - ${GATEWAY_PORT}:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
 volumes:
-  web-client-build:
   pgdata:
