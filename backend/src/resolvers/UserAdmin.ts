@@ -11,7 +11,9 @@ export class UserAdminResolver {
 	async users(@Ctx() ctx: UserContext): Promise<User[]> {
 		checkIfRegisteredOrIsAdmin(ctx.user);
 		try {
-			return await User.find({ relations: ['trips', 'reviews'] });
+			return await User.find({
+				relations: ['trips', 'reviewsAsAuthor', 'reviewsAsTarget'],
+			});
 		} catch (error) {
 			throw new Error('Failed to fetch users: ' + error.message);
 		}
