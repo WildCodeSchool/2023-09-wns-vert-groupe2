@@ -4,16 +4,35 @@ import { checkIfRegisteredOrIsAdmin } from '../utils/checker';
 import { UserContext } from '../types/User';
 import { UserUpdateAdmin } from '../inputs/User';
 
+import { redisClient } from '../index';
+
 @ObjectType()
 @Resolver()
 export class UserAdminResolver {
 	@Query(() => [User])
 	async users(@Ctx() ctx: UserContext): Promise<User[]> {
 		checkIfRegisteredOrIsAdmin(ctx.user);
+
 		try {
-			return await User.find({
-				relations: ['trips', 'reviewsAsAuthor', 'reviewsAsTarget'],
-			});
+			const cachedResult = await redisClient.get('users');
+
+			if (cachedResult !== null) {
+				return JSON.parse(cachedResult);
+			} else {
+				const users = await User.find({
+					relations: [
+						'trips.passengers',
+						'reviewsAsAuthor.author',
+						'reviewsAsAuthor.target',
+						'reviewsAsTarget.author',
+						'reviewsAsTarget.target',
+					],
+				});
+
+				redisClient.set('users', JSON.stringify(users), { EX: 3600 });
+
+				return users;
+			}
 		} catch (error) {
 			throw new Error('Failed to fetch users: ' + error.message);
 		}
