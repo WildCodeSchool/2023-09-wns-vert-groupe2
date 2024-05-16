@@ -62,10 +62,16 @@ export class User extends BaseEntity {
 	trips: Trip[];
 
 	@Field(() => [Review])
-	@OneToMany(() => Review, (review) => review.user, {
+	@OneToMany(() => Review, (review) => review.author, {
 		onDelete: 'CASCADE',
 	})
-	reviews: Review[];
+	reviewsAsAuthor: Review[];
+
+	@Field(() => [Review])
+	@OneToMany(() => Review, (review) => review.target, {
+		onDelete: 'CASCADE',
+	})
+	reviewsAsTarget: Review[];
 
 	@CreateDateColumn()
 	@Field()
