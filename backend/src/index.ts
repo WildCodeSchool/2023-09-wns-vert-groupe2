@@ -2,11 +2,11 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import dataSource from "../config/db";
+import dataSource from "./config/db";
 import { UserResolver } from "./resolvers/User";
 import { ReviewResolver } from "./resolvers/Review";
 import { TripResolver } from "./resolvers/Trip";
-import { UserAdminResolver } from './resolvers/UserAdmin';
+import { UserAdminResolver } from "./resolvers/UserAdmin";
 import jwt from "jsonwebtoken";
 
 const start = async () => {

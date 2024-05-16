@@ -1,0 +1,2 @@
+2024/04/18 12:22:25 [error] 21#21: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.65.1, server: , request: "GET / HTTP/1.1", upstream: "http://192.168.0.5:3000/", host: "localhost:8090"
+2024/04/18 12:45:18 [error] 29#29: *4 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.65.1, server: , request: "GET /favicon.ico HTTP/1.1", upstream: "http://192.168.80.5:3000/favicon.ico", host: "localhost:8090", referrer: "http://localhost:8090/graphql"
