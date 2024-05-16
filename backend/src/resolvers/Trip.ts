@@ -122,7 +122,7 @@ export class TripResolver {
     }
   }
 
-  // Ajout d'un utilisateur à un voyage
+  // Ici c pour ajouter un utilisateur à un voyage
   @Mutation(() => Trip)
   async addUserToTrip(
     @Arg("tripId") tripId: number,
@@ -136,10 +136,10 @@ export class TripResolver {
     try {
       const trip = await Trip.findOneOrFail({
         where: { id: tripId },
-        relations: ["driver", "passengers"],
+        relations: ["passengers"],
       });
 
-      // Vérifiez que l'utilisateur connecté est bien le créateur du voyage
+      // Ici c pour vérifier que l'utilisateur connecté est bien le créateur du voyage
       if (trip.driver !== ctx.user.id) {
         throw new Error(
           "Vous n'êtes pas autorisé à ajouter des passagers à ce voyage."
@@ -148,7 +148,7 @@ export class TripResolver {
 
       const user = await User.findOneOrFail({ where: { id: userId } });
 
-      // Ajouter l'utilisateur en tant que passager
+      // Ici c pour ajouter l'utilisateur en tant que passager
       trip.passengers.push(user);
 
       await trip.save();
