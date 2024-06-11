@@ -12,8 +12,21 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import Divider from "@mui/material/Divider";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { gql, useQuery } from "@apollo/client";
+
+const ME = gql`
+  query Me {
+    me {
+      id
+      email
+    }
+  }
+`;
 
 const pages = [
   { label: "Trouver un trajet", url: "/journeys" },
@@ -22,11 +35,11 @@ const pages = [
 const settings = [
   { label: "Mon compte", url: "/account" },
   { label: "Mes trajets", url: "/account/journey" },
-  { label: "Logout", url: "/" },
 ];
 
 export default function Navbar() {
   const router = useRouter();
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -47,6 +60,12 @@ export default function Navbar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const { data } = useQuery(ME);
+
+  const handleLogout = async () => {
+    localStorage.removeItem("token");
   };
 
   return (
@@ -143,38 +162,59 @@ export default function Navbar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Ouvrir les paramètres">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={() => router.push(`/${setting.url}`)}
-                >
-                  <Typography textAlign="center">{setting.label}</Typography>
+          {data && data.me ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Ouvrir les paramètres">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem>
+                  <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
+                    Hello {data.me.email} !
+                  </Typography>
                 </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+                <Divider />
+                {settings.map((setting, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => router.push(`/${setting.url}`)}
+                  >
+                    <Typography textAlign="center">{setting.label}</Typography>
+                  </MenuItem>
+                ))}
+                <Divider />
+                <MenuItem onClick={handleLogout}>
+                  <Typography>Log out</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+          ) : (
+            <Box>
+              <Link href="/login">
+                <Button variant="contained">Login</Button>
+              </Link>
+              <Link href="/register">
+                <Button variant="contained">Register</Button>
+              </Link>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
