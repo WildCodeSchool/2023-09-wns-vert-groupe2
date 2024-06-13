@@ -15,3 +15,30 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+export const CHANGE_PASSWORD_MUTATION = gql`
+  mutation ChangePassword($input: UserChangePassword!) {
+    changeMyPassword(input: $input) {
+      id
+    }
+  }
+`;
+
+export const DELETE_ME_MUTATION = gql`
+  mutation DeleteMe {
+    deleteMe
+  }
+`;
+
+export const UPDATE_ME_MUTATION = gql`
+  mutation UpdateMe($input: UserUpdateMe!) {
+    updateMe(input: $input) {
+      firstname
+      lastname
+      phoneNumber
+      birthdate
+      description
+      pictureUrl
+    }
+  }
+`;
