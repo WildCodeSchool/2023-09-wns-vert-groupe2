@@ -18,22 +18,29 @@ export class ReviewResolver {
   ): Promise<Review[]> {
     const redisKey = `user:${userId}:reviews`;
 
-    const cachedReviews = await redisClient.get(redisKey);
-    if (cachedReviews !== null) {
-      return JSON.parse(cachedReviews);
-    } else {
-      const reviews = await Review.find({
-        where: {
-          target: {
-            id: userId,
+    try {
+      const cachedReviews = await redisClient.get(redisKey);
+      if (cachedReviews !== null) {
+        console.log('Returning cached data:', cachedReviews);
+        return JSON.parse(cachedReviews);
+      } else {
+        const reviews = await Review.find({
+          where: {
+            target: {
+              id: userId,
+            },
           },
-        },
-        relations: ['author', 'target'],
-      });
+          relations: ['author', 'target'],
+        });
 
-      await redisClient.set(redisKey, JSON.stringify(reviews), { EX: 3600 });
+        console.log('Caching data:', JSON.stringify(reviews));
+        await redisClient.set(redisKey, JSON.stringify(reviews), { EX: 3600 });
 
-      return reviews;
+        return reviews;
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des critiques :', error);
+      throw new Error('Impossible de récupérer les critiques');
     }
   }
 
