@@ -1,32 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
 
 import Copyright from "@/components/Copyright";
 
-import { gql, useMutation } from "@apollo/client";
+import { useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
-
-const REGISTER_MUTATION = gql`
-  mutation Register($input: UserRegisterInput!) {
-    register(input: $input) {
-      token
-    }
-  }
-`;
+import { useDispatch } from "react-redux";
+import { ME } from "@/graphql/queries/user";
+import { setCurrentUser } from "@/slices/userSlice";
+import { REGISTER_MUTATION } from "@/graphql/mutations/user";
 
 export default function RegisterPage() {
+  const dispatch = useDispatch();
+  const client = useApolloClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [register, { data, loading, error }] = useMutation(REGISTER_MUTATION);
@@ -40,6 +41,14 @@ export default function RegisterPage() {
       });
       if (data && data.register && data.register.token) {
         localStorage.setItem("token", data.register.token);
+
+        const { data: userData } = await client.query({
+          query: ME,
+          fetchPolicy: "network-only",
+        });
+
+        dispatch(setCurrentUser(userData.me));
+        
         router.push("/");
       }
     } catch (e) {

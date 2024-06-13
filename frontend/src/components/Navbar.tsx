@@ -1,44 +1,43 @@
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+  Divider,
+} from "@mui/material";
+
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import Divider from "@mui/material/Divider";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { gql, useQuery } from "@apollo/client";
-
-const ME = gql`
-  query Me {
-    me {
-      id
-      email
-    }
-  }
-`;
+import { useDispatch, useSelector } from "react-redux";
+import { clearCurrentUser } from "@/slices/userSlice";
 
 const pages = [
   { label: "Trouver un trajet", url: "/trips" },
   { label: "Proposer un trajet", url: "/journeys/create" },
 ];
 const settings = [
-  { label: "Mon compte", url: "/account" },
+  { label: "Mon compte", url: "account" },
   { label: "Mes trajets", url: "/account/journey" },
 ];
 
 export default function Navbar() {
   const router = useRouter();
+
+  const dispatch = useDispatch();
+  const me = useSelector((state) => state.user.currentUser);
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -62,10 +61,10 @@ export default function Navbar() {
     setAnchorElUser(null);
   };
 
-  const { data } = useQuery(ME);
-
   const handleLogout = async () => {
     localStorage.removeItem("token");
+    dispatch(clearCurrentUser());
+    router.push("/login");
   };
 
   return (
@@ -162,11 +161,11 @@ export default function Navbar() {
             ))}
           </Box>
 
-          {data && data.me ? (
+          {me ? (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Ouvrir les paramètres">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar alt={me.email} src={me.pictureUrl} />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -185,11 +184,9 @@ export default function Navbar() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem>
-                  <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
-                    Hello {data.me.email} !
-                  </Typography>
-                </MenuItem>
+                <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
+                  Hello {me.email} !
+                </Typography>
                 <Divider />
                 {settings.map((setting, index) => (
                   <MenuItem
@@ -201,7 +198,7 @@ export default function Navbar() {
                 ))}
                 <Divider />
                 <MenuItem onClick={handleLogout}>
-                  <Typography>Log out</Typography>
+                  <Typography textAlign="center">Log out</Typography>
                 </MenuItem>
               </Menu>
             </Box>
