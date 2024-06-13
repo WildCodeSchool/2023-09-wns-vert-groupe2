@@ -1,43 +1,47 @@
 import { Field, ObjectType } from 'type-graphql';
 import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
+	BaseEntity,
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	ManyToOne,
+	CreateDateColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user';
 
 @ObjectType()
 @Entity()
 export class Review extends BaseEntity {
-  @Field()
-  @PrimaryGeneratedColumn()
-  id: number;
+	@Field()
+	@PrimaryGeneratedColumn()
+	id: number;
 
-  @Field()
-  @Column()
-  rating: number;
+	@Field()
+	@Column()
+	rating: number;
 
-  @Field()
-  @Column()
-  comment: string;
+	@Field()
+	@Column()
+	comment: string;
 
-  @Field()
-  @Column({ nullable: true })
-  type: string;
+	@Field()
+	@Column({ nullable: true })
+	type: string;
 
-  @ManyToOne(() => User, (user) => user.reviews)
-  @Field(() => User)
-  user: User;
+	@ManyToOne(() => User, (user) => user.reviewsAsAuthor)
+	@Field(() => User)
+	author: User;
 
-  @CreateDateColumn()
-  @Field()
-  createdAt: Date;
+	@ManyToOne(() => User, (user) => user.reviewsAsTarget)
+	@Field(() => User)
+	target: User;
 
-  @UpdateDateColumn()
-  @Field()
-  updatedAt: Date;
+	@CreateDateColumn()
+	@Field()
+	createdAt: Date;
+
+	@UpdateDateColumn()
+	@Field()
+	updatedAt: Date;
 }

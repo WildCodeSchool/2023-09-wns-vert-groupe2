@@ -86,7 +86,13 @@ export class UserResolver {
 				where: {
 					id: ctx.user.id,
 				},
-				relations: ['reviews', 'trips'],
+				relations: [
+					'trips.passengers',
+					'reviewsAsAuthor.author',
+					'reviewsAsAuthor.target',
+					'reviewsAsTarget.author',
+					'reviewsAsTarget.target',
+				],
 			});
 
 			if (!authenticatedUser) {

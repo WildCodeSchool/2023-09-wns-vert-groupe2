@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { TripUpdateInput } from "../src/inputs/TripUpdate"; //trip dans le dossier inputs
 
 describe("TripUpdateInput", () => {

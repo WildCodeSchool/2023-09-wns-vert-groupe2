@@ -31,13 +31,11 @@ export class TripResolver {
       throw new Error("Not authenticated!");
     }
     try {
-      const user = await User.findOne({
+      const user = await User.findOneOrFail({
         where: {
           id: ctx.user.id,
         },
       });
-
-      if (!user) throw new Error("User not found!");
 
       const trip = await Trip.save({
         ...data,
@@ -118,6 +116,47 @@ export class TripResolver {
     } catch (error) {
       console.error(
         "Une erreur s'est produite lors de la récupération des voyages :",
+        error
+      );
+      throw error;
+    }
+  }
+
+  // Ici c pour ajouter un utilisateur à un voyage
+  @Mutation(() => Trip)
+  async addUserToTrip(
+    @Arg("tripId") tripId: number,
+    @Arg("userId") userId: number,
+    @Ctx() ctx: UserContext
+  ): Promise<Trip> {
+    if (!ctx.user) {
+      throw new Error("Not authenticated!");
+    }
+
+    try {
+      const trip = await Trip.findOneOrFail({
+        where: { id: tripId },
+        relations: ["passengers"],
+      });
+
+      // Ici c pour vérifier que l'utilisateur connecté est bien le créateur du voyage
+      if (trip.driver !== ctx.user.id) {
+        throw new Error(
+          "Vous n'êtes pas autorisé à ajouter des passagers à ce voyage."
+        );
+      }
+
+      const user = await User.findOneOrFail({ where: { id: userId } });
+
+      // Ici c pour ajouter l'utilisateur en tant que passager
+      trip.passengers.push(user);
+
+      await trip.save();
+
+      return trip;
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de l'ajout de l'utilisateur au voyage :",
         error
       );
       throw error;
