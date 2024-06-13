@@ -1,5 +1,13 @@
-import { gql, useMutation } from "@apollo/client";
-import { useState } from "react";
+import { gql, useMutation } from '@apollo/client';
+import { useState } from 'react';
+import {
+  TextField,
+  Button,
+  CircularProgress,
+  Typography,
+  Container,
+  Paper,
+} from '@mui/material';
 
 const CREATE_TRIP = gql`
   mutation CreateTrip($data: TripInput!) {
@@ -20,71 +28,130 @@ const CREATE_TRIP = gql`
 
 const CreateTrip = () => {
   const [formState, setFormState] = useState({
-    date: "",
+    date: '',
     price: 0,
-    status: "",
-    startLocation: "",
-    stopLocations: "",
-    endLocation: "",
+    status: '',
+    startLocation: '',
+    stopLocations: '',
+    endLocation: '',
   });
 
-  const [createTrip, { data, loading, error }] = useMutation(CREATE_TRIP);
+  const [createTrip, { loading, error, data }] = useMutation(CREATE_TRIP);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    createTrip({ variables: { data: formState } });
+
+    const formattedDate = new Date(formState.date).toISOString();
+
+    const tripData = {
+      ...formState,
+      date: formattedDate,
+    };
+    createTrip({ variables: { data: tripData } });
+
+    setFormState({
+      date: '',
+      price: 0,
+      status: '',
+      startLocation: '',
+      stopLocations: '',
+      endLocation: '',
+    });
   };
 
   return (
-    <div>
-      <h1>Create Trip</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="date"
-          value={formState.date}
-          onChange={(e) => setFormState({ ...formState, date: e.target.value })}
-        />
-        <input
-          type="number"
-          value={formState.price}
-          onChange={(e) =>
-            setFormState({ ...formState, price: parseFloat(e.target.value) })
-          }
-        />
-        <input
-          type="text"
-          value={formState.status}
-          onChange={(e) =>
-            setFormState({ ...formState, status: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          value={formState.startLocation}
-          onChange={(e) =>
-            setFormState({ ...formState, startLocation: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          value={formState.stopLocations}
-          onChange={(e) =>
-            setFormState({ ...formState, stopLocations: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          value={formState.endLocation}
-          onChange={(e) =>
-            setFormState({ ...formState, endLocation: e.target.value })
-          }
-        />
-        <button type="submit">Create Trip</button>
-      </form>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error :(</p>}
-      {data && <p>Trip created successfully!</p>}
-    </div>
+    <Container maxWidth='sm'>
+      <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+        <Typography variant='h4' gutterBottom>
+          Create Trip
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            type='date'
+            label='Date'
+            value={formState.date}
+            onChange={(e) =>
+              setFormState({ ...formState, date: e.target.value })
+            }
+            InputLabelProps={{
+              shrink: true,
+            }}
+            placeholder='Select date'
+            style={{ marginBottom: '20px' }}
+          />
+          <TextField
+            fullWidth
+            type='number'
+            label='Price'
+            value={formState.price}
+            onChange={(e) =>
+              setFormState({ ...formState, price: parseFloat(e.target.value) })
+            }
+            placeholder='Enter price'
+            style={{ marginBottom: '20px' }}
+          />
+          <TextField
+            fullWidth
+            type='text'
+            label='Status'
+            value={formState.status}
+            onChange={(e) =>
+              setFormState({ ...formState, status: e.target.value })
+            }
+            placeholder='Enter status'
+            style={{ marginBottom: '20px' }}
+          />
+          <TextField
+            fullWidth
+            type='text'
+            label='Start Location'
+            value={formState.startLocation}
+            onChange={(e) =>
+              setFormState({ ...formState, startLocation: e.target.value })
+            }
+            placeholder='Enter start location'
+            style={{ marginBottom: '20px' }}
+          />
+          <TextField
+            fullWidth
+            type='text'
+            label='Stop Locations'
+            value={formState.stopLocations}
+            onChange={(e) =>
+              setFormState({ ...formState, stopLocations: e.target.value })
+            }
+            placeholder='Enter stop locations'
+            style={{ marginBottom: '20px' }}
+          />
+          <TextField
+            fullWidth
+            type='text'
+            label='End Location'
+            value={formState.endLocation}
+            onChange={(e) =>
+              setFormState({ ...formState, endLocation: e.target.value })
+            }
+            placeholder='Enter end location'
+            style={{ marginBottom: '20px' }}
+          />
+          <Button
+            type='submit'
+            variant='contained'
+            color='primary'
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Create Trip'}
+          </Button>
+        </form>
+        {error && <Typography color='error'>{error.message}</Typography>}
+        {data && (
+          <Typography style={{ marginTop: '10px' }}>
+            Trip created successfully!
+          </Typography>
+        )}
+      </Paper>
+    </Container>
   );
 };
 
