@@ -1,4 +1,3 @@
-// Dans ta page où tu veux afficher le formulaire
 import CreateReviewForm from '../../components/reviews/CreateReviewForm';
 
 const MyPage = () => {

@@ -4,7 +4,6 @@ import Alert from '@mui/material/Alert';
 import StarIcon from '@mui/icons-material/Star';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 
-// Composant RatingStars
 const RatingStars = ({ rating }: { rating: number }) => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars >= 0.5;
@@ -26,7 +25,6 @@ const RatingStars = ({ rating }: { rating: number }) => {
   return <div>{renderStars()}</div>;
 };
 
-// Requête GraphQL
 const GET_REVIEWS_FOR_USER = gql`
   query GetReviewsForUser($userId: Int!) {
     reviewsForUser(userId: $userId) {
@@ -41,7 +39,6 @@ const GET_REVIEWS_FOR_USER = gql`
   }
 `;
 
-// Composant ReviewList
 const ReviewList = ({ userId }: { userId: number }) => {
   const { loading, error, data } = useQuery(GET_REVIEWS_FOR_USER, {
     variables: { userId },
