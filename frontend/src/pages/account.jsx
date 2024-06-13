@@ -32,13 +32,15 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   CHANGE_PASSWORD_MUTATION,
   DELETE_ME_MUTATION,
   UPDATE_ME_MUTATION,
 } from "@/graphql/mutations/user";
+
+import { updateCurrentUser } from "@/slices/userSlice";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -49,6 +51,7 @@ dayjs.extend(localizedFormat);
 
 export default function Account() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const me = useSelector((state) => state.user.currentUser);
 
@@ -59,6 +62,8 @@ export default function Account() {
   const [birthdate, setBirthdate] = useState(
     me?.birthdate ? dayjs(me.birthdate) : ""
   );
+
+  const [pictureUrl, setPictureUrl] = useState("");
 
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -105,7 +110,7 @@ export default function Account() {
   const handleSubmitUpdateMe = async (e) => {
     try {
       e.preventDefault();
-      await updateMe({
+      const { data } = await updateMe({
         variables: {
           input: {
             firstname,
@@ -113,10 +118,14 @@ export default function Account() {
             phoneNumber,
             description,
             birthdate: birthdate.toISOString(),
-            pictureUrl: "",
+            pictureUrl,
           },
         },
       });
+
+      if (data && data.updateMe) {
+        dispatch(updateCurrentUser(data.updateMe));
+      }
     } catch (e) {
       console.error("Update me error:", e);
     }
