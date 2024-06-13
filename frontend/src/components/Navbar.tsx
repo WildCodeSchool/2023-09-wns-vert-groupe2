@@ -29,7 +29,7 @@ const ME = gql`
 `;
 
 const pages = [
-  { label: "Trouver un trajet", url: "/journeys" },
+  { label: "Trouver un trajet", url: "/trips" },
   { label: "Proposer un trajet", url: "/journeys/create" },
 ];
 const settings = [
