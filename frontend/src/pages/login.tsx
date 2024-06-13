@@ -28,7 +28,7 @@ import { LOGIN_MUTATION } from "@/graphql/mutations/user";
 export default function LoginPage() {
   const dispatch = useDispatch();
   const client = useApolloClient();
-
+    
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);

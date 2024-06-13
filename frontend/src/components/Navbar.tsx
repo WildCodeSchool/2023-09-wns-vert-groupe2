@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearCurrentUser } from "@/slices/userSlice";
 
 const pages = [
-  { label: "Trouver un trajet", url: "/journeys" },
+  { label: "Trouver un trajet", url: "/trips" },
   { label: "Proposer un trajet", url: "/journeys/create" },
 ];
 const settings = [
@@ -35,6 +35,7 @@ const settings = [
 
 export default function Navbar() {
   const router = useRouter();
+
   const dispatch = useDispatch();
   const me = useSelector((state) => state.user.currentUser);
 

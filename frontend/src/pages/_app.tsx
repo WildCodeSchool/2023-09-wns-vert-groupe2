@@ -5,6 +5,7 @@ import {
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import type { AppProps } from "next/app";
 import ThemeProvider from "../styles/theme";
 import { setContext } from "@apollo/client/link/context";

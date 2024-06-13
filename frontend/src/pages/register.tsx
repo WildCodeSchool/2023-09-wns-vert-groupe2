@@ -28,7 +28,6 @@ import { REGISTER_MUTATION } from "@/graphql/mutations/user";
 export default function RegisterPage() {
   const dispatch = useDispatch();
   const client = useApolloClient();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [register, { data, loading, error }] = useMutation(REGISTER_MUTATION);
@@ -49,7 +48,7 @@ export default function RegisterPage() {
         });
 
         dispatch(setCurrentUser(userData.me));
-
+        
         router.push("/");
       }
     } catch (e) {
