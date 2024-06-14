@@ -9,6 +9,8 @@ import { setContext } from "@apollo/client/link/context";
 import type { AppProps } from "next/app";
 import ThemeProvider from "../styles/theme";
 import Layout from "@/components/Layout";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { ToastContainer } from "react-toast";
 
 const httpLink = createHttpLink({
   uri: "http://localhost:4000",
@@ -33,11 +35,14 @@ const client = new ApolloClient({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ThemeProvider>
+      </AuthProvider>
+      <ToastContainer />
     </ApolloProvider>
   );
 }

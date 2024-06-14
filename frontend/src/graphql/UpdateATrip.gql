@@ -1,5 +1,5 @@
-query GetAllTrips {
-  trips {
+mutation UpdateTrip($id: Float!, $data: TripUpdateInput!) {
+  updateTrip(id: $id, data: $data) {
     id
     date
     price

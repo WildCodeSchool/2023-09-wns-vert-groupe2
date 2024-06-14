@@ -1,0 +1,18 @@
+query GetAllTrips {
+  trips {
+    id
+    date
+    price
+    status
+    startLocation
+    stopLocations
+    endLocation
+    driver
+    createdAt
+    updatedAt
+    passengers {
+      id
+      email
+    }
+  }
+}

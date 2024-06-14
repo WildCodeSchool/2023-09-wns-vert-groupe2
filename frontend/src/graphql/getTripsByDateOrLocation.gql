@@ -1,0 +1,26 @@
+query getTripsByDateAndLocations(
+  $date: DateTimeISO!
+  $startLocation: String!
+  $stopLocations: String!
+) {
+  getTripsByDateAndLocations(
+    date: $date
+    startLocation: $startLocation
+    stopLocations: $stopLocations
+  ) {
+    id
+    date
+    price
+    status
+    startLocation
+    stopLocations
+    endLocation
+    driver
+    createdAt
+    updatedAt
+    passengers {
+      id
+      email
+    }
+  }
+}

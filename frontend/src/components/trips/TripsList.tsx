@@ -3,16 +3,19 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Divider,
   Typography,
 } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { SearchBar } from "./TripSearch";
-import trips from "./trips.json";
 import { Dispatch, SetStateAction } from "react";
-import formatHours from "@/utils/formatHours";
-import foundDuration from "@/utils/duration";
+
+import {
+  useGetAllTripsQuery,
+  useGetTripsByDateAndLocationsQuery,
+} from "@/gql/graphql";
+import { useRouter } from "next/router";
+import Loader from "../Loader";
 
 export default function TripsList({
   search,
@@ -21,6 +24,17 @@ export default function TripsList({
   search: SearchBar;
   setSearch: Dispatch<SetStateAction<SearchBar>>;
 }) {
+  const { data, loading, error } = useGetAllTripsQuery();
+  const { data: searchData, loading: searchLoading } =
+    useGetTripsByDateAndLocationsQuery({
+      variables: {
+        date: new Date(),
+        startLocation: "",
+        stopLocations: "",
+      },
+    });
+  const trips = data?.trips;
+
   return (
     <div
       style={{
@@ -97,75 +111,86 @@ export default function TripsList({
                 />
                 <Typography fontSize="small">{search.end}</Typography>
               </div>
-              <Typography>{trips.length} trajets disponibles</Typography>
+              <Typography>
+                {trips ? trips.length : 0} trajets disponibles
+              </Typography>
             </div>
           </CardContent>
         </Card>
-        {trips.map((trip, index: number) => {
-          return <TripCard key={index} trip={trip} />;
-        })}
+        {loading && <Loader />}
+        {!loading &&
+          trips &&
+          trips.map((trip, index: number) => {
+            return <TripCard key={index} trip={trip} />;
+          })}
       </div>
     </div>
   );
 }
 interface Trip {
   id: number;
-  date: string;
+  date: Date;
   price: number;
   status: string;
   startLocation: string;
-  stopLocations?: string[];
-  departTime: string;
-  arrivalTime: string;
+  stopLocations: string;
   endLocation: string;
-  passengers: string[];
-  driver: string;
+  driver: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 function TripCard({ trip }: { trip: Trip }) {
-  const departHours = formatHours(trip.departTime);
-  const endHours = formatHours(trip.arrivalTime);
-  const duration = foundDuration(trip.departTime, trip.arrivalTime);
+  const router = useRouter();
   return (
-    <Card
-      sx={{
-        backgroundColor: "#FFFFFF",
-        width: "50vw",
-        marginBottom: "2rem",
-        maxHeight: "35vh",
+    <button
+      onClick={() => router.push(`/trips/${trip.id}`)}
+      style={{
+        border: 0,
+        background: "inherit",
+        cursor: "pointer",
+        margin: 0,
+        padding: 0,
       }}
     >
-      <CardContent>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "1.5rem",
-          }}
-        >
-          <div style={{ display: "flex" }}>
-            <Typography typography="bold" sx={{ marginRight: "2rem" }}>
-              {departHours.hours}:{departHours.minute}
-            </Typography>
-            <Typography>{trip.startLocation}</Typography>
-          </div>
-          <Typography>{trip.price} €</Typography>
-        </div>
-        <div style={{ marginBottom: "1.5rem" }}>
-          <Typography variant="caption">
-            {duration.heures}h{" "}
-            {duration.minutes === 0 ? "00" : duration.minutes}
-          </Typography>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div style={{ display: "flex" }}>
-            <Typography typography="bold" sx={{ marginRight: "2rem" }}>
-              {endHours.hours}:{endHours.minute}
-            </Typography>
+      <Card
+        sx={{
+          backgroundColor: "#FFFFFF",
+          width: "50vw",
+          marginBottom: "2rem",
+          maxHeight: "35vh",
+        }}
+      >
+        <CardContent>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "1.5rem",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <Typography>{trip.startLocation}</Typography>{" "}
+            </div>
+            <ArrowForwardIcon fontSize="small" style={{ margin: "0 2rem" }} />
             <Typography>{trip.endLocation}</Typography>
           </div>
-          <Typography>Chauffeur {trip.driver}</Typography>
-        </div>
-      </CardContent>
-    </Card>
+          <div
+            style={{
+              display: "flex",
+              alignContent: "flex-start",
+              marginBottom: "1rem",
+            }}
+          >
+            <Typography>Arrêts prevus: {trip.stopLocations}</Typography>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography>{trip.price} €</Typography>
+            <div>
+              <Typography>Proposé par le Chauffeur {trip.driver}</Typography>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </button>
   );
 }

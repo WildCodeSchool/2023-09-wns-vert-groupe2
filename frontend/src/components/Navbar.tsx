@@ -11,26 +11,15 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Divider from "@mui/material/Divider";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-import { gql, useQuery } from "@apollo/client";
-
-const ME = gql`
-  query Me {
-    me {
-      id
-      email
-    }
-  }
-`;
+import { AuthContext } from "@/providers/AuthProvider";
 
 const pages = [
   { label: "Trouver un trajet", url: "/trips" },
-  { label: "Proposer un trajet", url: "/journeys/create" },
+  { label: "Proposer un trajet", url: "/trips/create" },
 ];
 const settings = [
   { label: "Mon compte", url: "/account" },
@@ -62,11 +51,7 @@ export default function Navbar() {
     setAnchorElUser(null);
   };
 
-  const { data } = useQuery(ME);
-
-  const handleLogout = async () => {
-    localStorage.removeItem("token");
-  };
+  const { me, isLoggedIn, signOut } = React.useContext(AuthContext);
 
   return (
     <AppBar sx={{ bgcolor: "#114360" }}>
@@ -204,7 +189,7 @@ export default function Navbar() {
             ))}
           </Box>
 
-          {data && data.me ? (
+          {isLoggedIn && me ? (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Ouvrir les paramètres">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -229,7 +214,7 @@ export default function Navbar() {
               >
                 <MenuItem>
                   <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
-                    Hello {data.me.email} !
+                    Hello {me.email} !
                   </Typography>
                 </MenuItem>
                 <Divider />
@@ -242,18 +227,18 @@ export default function Navbar() {
                   </MenuItem>
                 ))}
                 <Divider />
-                <MenuItem onClick={handleLogout}>
-                  <Typography>Log out</Typography>
+                <MenuItem onClick={() => signOut()}>
+                  <Typography>Se déconnecter</Typography>
                 </MenuItem>
               </Menu>
             </Box>
           ) : (
-            <Box>
+            <Box sx={{ marginLeft: "5px" }}>
               <Link href="/login">
-                <Button variant="contained">Login</Button>
+                <Button variant="contained">Se connecter</Button>
               </Link>
               <Link href="/register">
-                <Button variant="contained">Register</Button>
+                <Button variant="contained">S&apos;inscrire</Button>
               </Link>
             </Box>
           )}

@@ -12,35 +12,36 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-
-import Copyright from "@/components/Copyright";
-
-import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
+import { useRegisterMutation } from "@/gql/graphql";
 
-const REGISTER_MUTATION = gql`
-  mutation Register($input: UserRegisterInput!) {
-    register(input: $input) {
-      token
-    }
-  }
-`;
-
+interface RegisterData {
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  password: string;
+}
 export default function RegisterPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [register, { data, loading, error }] = useMutation(REGISTER_MUTATION);
+  const [dataRegister, setDateRegister] = useState<RegisterData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const [register, { data, loading, error }] = useRegisterMutation();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
       const { data } = await register({
-        variables: { input: { email, password } },
+        variables: {
+          input: { email: dataRegister.email, password: dataRegister.password },
+        },
       });
       if (data && data.register && data.register.token) {
         localStorage.setItem("token", data.register.token);
-        router.push("/");
+        router.push("/register");
       }
     } catch (e) {
       console.error("Registration error:", e);
@@ -71,13 +72,13 @@ export default function RegisterPage() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign up
+          Inscription
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           {error && <Alert severity="error">Error: {error.message}</Alert>}
           {data && data.register && data.register.token && (
             <Alert severity="success">
-              Registratrion successfull ! Redirecting...
+              Inscription réussie ! Redirection en cours...
             </Alert>
           )}
           <Grid container spacing={2} mt={0.5}>
@@ -86,22 +87,27 @@ export default function RegisterPage() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Adresse Email"
                 name="email"
                 autoComplete="email"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                  setDateRegister({ ...dataRegister, password: e.target.value })
+                }
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Mot de passe"
                 type="password"
                 id="password"
                 autoComplete="new-password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setDateRegister({ ...dataRegister, email: e.target.value })
+                }
               />
             </Grid>
           </Grid>
@@ -116,13 +122,12 @@ export default function RegisterPage() {
           <Grid container>
             <Grid item>
               <Link href="/login" variant="body2">
-                Already have an account? Sign in
+                Vous avez déjà un compte ? Connectez-vous
               </Link>
             </Grid>
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 10 }} />
     </Container>
   );
 }

@@ -1,0 +1,3 @@
+mutation DeleteTrip($id: Float!) {
+  deleteTrip(id: $id)
+}
