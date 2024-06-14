@@ -43,7 +43,7 @@ const TripsPage = () => {
                 <Typography>Start Location: {trip.startLocation}</Typography>
                 <Typography>Stop Locations: {trip.stopLocations}</Typography>
                 <Typography>End Location: {trip.endLocation}</Typography>
-                <Link href={`/update-trip/${trip.id}`} passHref>
+                {/* <Link href={`/update-trip/${trip.id}`} passHref>
                   <Button
                     variant='contained'
                     color='primary'
@@ -60,7 +60,7 @@ const TripsPage = () => {
                   >
                     Supprimez votre trajet
                   </Button>
-                </Link>
+                </Link> */}
               </CardContent>
             </Card>
           </Grid>
