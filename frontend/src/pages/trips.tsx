@@ -1,5 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
-import Link from "next/link";
+import { gql, useQuery } from '@apollo/client';
+import Link from 'next/link';
+import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
 
 const GET_TRIPS = gql`
   query GetTrips {
@@ -21,27 +22,50 @@ const GET_TRIPS = gql`
 const TripsPage = () => {
   const { loading, error, data } = useQuery(GET_TRIPS);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography>Error :(</Typography>;
 
   return (
     <div>
-      <h1>Trips</h1>
-      <ul>
+      <Typography variant='h1' gutterBottom>
+        Trips
+      </Typography>
+      <Grid container spacing={3}>
         {data.trips.map((trip: any) => (
-          <li key={trip.id}>
-            <p>Date: {new Date(trip.date).toLocaleDateString()}</p>
-            <p>Price: {trip.price}</p>
-            <p>Status: {trip.status}</p>
-            <p>Start Location: {trip.startLocation}</p>
-            <p>Stop Locations: {trip.stopLocations}</p>
-            <p>End Location: {trip.endLocation}</p>
-            <Link href={`/update-trip/${trip.id}`}>Modifiez votre trajet</Link>
-            <br />
-            <Link href={`/delete-trip/${trip.id}`}>Supprimez votre trajet</Link>
-          </li>
+          <Grid item xs={12} sm={6} md={4} key={trip.id}>
+            <Card sx={{ borderRadius: 2, backgroundColor: '#fff' }}>
+              <CardContent>
+                <Typography variant='h6'>
+                  Date: {new Date(trip.date).toLocaleDateString()}
+                </Typography>
+                <Typography>Price: {trip.price}</Typography>
+                <Typography>Status: {trip.status}</Typography>
+                <Typography>Start Location: {trip.startLocation}</Typography>
+                <Typography>Stop Locations: {trip.stopLocations}</Typography>
+                <Typography>End Location: {trip.endLocation}</Typography>
+                <Link href={`/update-trip/${trip.id}`} passHref>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    style={{ marginTop: '10px' }}
+                  >
+                    Modifiez votre trajet
+                  </Button>
+                </Link>
+                <Link href={`/delete-trip/${trip.id}`} passHref>
+                  <Button
+                    variant='outlined'
+                    color='secondary'
+                    style={{ marginTop: '10px', marginLeft: '10px' }}
+                  >
+                    Supprimez votre trajet
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </ul>
+      </Grid>
     </div>
   );
 };
