@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: any }) {
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column',
-            margin: '5vh 0',
+            margin: '20vh 0',
           }}
         >
           <Navbar />
