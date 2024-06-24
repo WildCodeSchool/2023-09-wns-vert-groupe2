@@ -1,5 +1,4 @@
 import { useMeLazyQuery } from "@/gql/graphql";
-import { gql, useLazyQuery } from "@apollo/client";
 import React, { ReactElement, createContext, useEffect, useState } from "react";
 
 interface AuthContextType {
@@ -9,6 +8,12 @@ interface AuthContextType {
   me?: {
     id?: number;
     email?: string;
+    firstname?: string;
+    lastname?: string;
+    description?: string;
+    birthdate?: Date;
+    phoneNumber?: string;
+    pictureUrl?: string;
   } | null;
 }
 
@@ -21,6 +26,12 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
     | {
         id?: number;
         email?: string;
+        firstname?: string;
+        lastname?: string;
+        description?: string;
+        birthdate?: Date;
+        phoneNumber?: string;
+        pictureUrl?: string;
       }
     | undefined
     | null
@@ -49,11 +60,18 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   }, [isLoggedIn, loadMe]);
 
   useEffect(() => {
-    if (data) {
+    if (data && data.me) {
       setMe({
         id: data.me.id,
         email: data.me.email,
+        firstname: data.me.firstname,
+        lastname: data.me.lastname,
+        description: data.me.description,
+        birthdate: data.me.birthdate,
+        phoneNumber: data.me.phoneNumber,
+        pictureUrl: data.me.pictureUrl,
       });
+
       setHasAccess(true);
       setIsLoggedIn(true);
     } else if (error) {

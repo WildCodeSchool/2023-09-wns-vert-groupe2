@@ -248,6 +248,15 @@ export type AddUserToTripMutation = {
   addUserToTrip: { __typename?: "Trip"; id: number };
 };
 
+export type ChangePasswordMutationVariables = Exact<{
+  input: UserChangePassword;
+}>;
+
+export type ChangePasswordMutation = {
+  __typename?: "Mutation";
+  changeMyPassword: { __typename?: "User"; id: number };
+};
+
 export type CreateReviewMutationVariables = Exact<{
   rating: Scalars["Int"]["input"];
   comment: Scalars["String"]["input"];
@@ -289,6 +298,10 @@ export type DeleteTripMutation = {
   deleteTrip: boolean;
 };
 
+export type DeleteMeMutationVariables = Exact<{ [key: string]: never }>;
+
+export type DeleteMeMutation = { __typename?: "Mutation"; deleteMe: string };
+
 export type LoginMutationVariables = Exact<{
   input: UserLoginInput;
 }>;
@@ -302,7 +315,17 @@ export type MeQueryVariables = Exact<{ [key: string]: never }>;
 
 export type MeQuery = {
   __typename?: "Query";
-  me: { __typename?: "User"; id: number; email: string };
+  me: {
+    __typename?: "User";
+    id: number;
+    email: string;
+    firstname: string;
+    lastname: string;
+    description: string;
+    birthdate: any;
+    phoneNumber: string;
+    pictureUrl: string;
+  };
 };
 
 export type RegisterMutationVariables = Exact<{
@@ -333,6 +356,23 @@ export type UpdateTripMutation = {
     driver: number;
     createdAt: any;
     updatedAt: any;
+  };
+};
+
+export type UpdateMeMutationVariables = Exact<{
+  input: UserUpdateMe;
+}>;
+
+export type UpdateMeMutation = {
+  __typename?: "Mutation";
+  updateMe: {
+    __typename?: "User";
+    firstname: string;
+    lastname: string;
+    phoneNumber: string;
+    birthdate: any;
+    description: string;
+    pictureUrl: string;
   };
 };
 
@@ -445,6 +485,56 @@ export type AddUserToTripMutationResult =
 export type AddUserToTripMutationOptions = Apollo.BaseMutationOptions<
   AddUserToTripMutation,
   AddUserToTripMutationVariables
+>;
+export const ChangePasswordDocument = gql`
+  mutation ChangePassword($input: UserChangePassword!) {
+    changeMyPassword(input: $input) {
+      id
+    }
+  }
+`;
+export type ChangePasswordMutationFn = Apollo.MutationFunction<
+  ChangePasswordMutation,
+  ChangePasswordMutationVariables
+>;
+
+/**
+ * __useChangePasswordMutation__
+ *
+ * To run a mutation, you first call `useChangePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangePasswordMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables
+  >(ChangePasswordDocument, options);
+}
+export type ChangePasswordMutationHookResult = ReturnType<
+  typeof useChangePasswordMutation
+>;
+export type ChangePasswordMutationResult =
+  Apollo.MutationResult<ChangePasswordMutation>;
+export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<
+  ChangePasswordMutation,
+  ChangePasswordMutationVariables
 >;
 export const CreateReviewDocument = gql`
   mutation CreateReview($rating: Int!, $comment: String!, $targetId: Int!) {
@@ -605,6 +695,50 @@ export type DeleteTripMutationOptions = Apollo.BaseMutationOptions<
   DeleteTripMutation,
   DeleteTripMutationVariables
 >;
+export const DeleteMeDocument = gql`
+  mutation DeleteMe {
+    deleteMe
+  }
+`;
+export type DeleteMeMutationFn = Apollo.MutationFunction<
+  DeleteMeMutation,
+  DeleteMeMutationVariables
+>;
+
+/**
+ * __useDeleteMeMutation__
+ *
+ * To run a mutation, you first call `useDeleteMeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMeMutation, { data, loading, error }] = useDeleteMeMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteMeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteMeMutation,
+    DeleteMeMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeleteMeMutation, DeleteMeMutationVariables>(
+    DeleteMeDocument,
+    options
+  );
+}
+export type DeleteMeMutationHookResult = ReturnType<typeof useDeleteMeMutation>;
+export type DeleteMeMutationResult = Apollo.MutationResult<DeleteMeMutation>;
+export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<
+  DeleteMeMutation,
+  DeleteMeMutationVariables
+>;
 export const LoginDocument = gql`
   mutation Login($input: UserLoginInput!) {
     login(input: $input) {
@@ -657,6 +791,12 @@ export const MeDocument = gql`
     me {
       id
       email
+      firstname
+      lastname
+      description
+      birthdate
+      phoneNumber
+      pictureUrl
     }
   }
 `;
@@ -807,6 +947,58 @@ export type UpdateTripMutationResult =
 export type UpdateTripMutationOptions = Apollo.BaseMutationOptions<
   UpdateTripMutation,
   UpdateTripMutationVariables
+>;
+export const UpdateMeDocument = gql`
+  mutation UpdateMe($input: UserUpdateMe!) {
+    updateMe(input: $input) {
+      firstname
+      lastname
+      phoneNumber
+      birthdate
+      description
+      pictureUrl
+    }
+  }
+`;
+export type UpdateMeMutationFn = Apollo.MutationFunction<
+  UpdateMeMutation,
+  UpdateMeMutationVariables
+>;
+
+/**
+ * __useUpdateMeMutation__
+ *
+ * To run a mutation, you first call `useUpdateMeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMeMutation, { data, loading, error }] = useUpdateMeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateMeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateMeMutation,
+    UpdateMeMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateMeMutation, UpdateMeMutationVariables>(
+    UpdateMeDocument,
+    options
+  );
+}
+export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
+export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
+export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<
+  UpdateMeMutation,
+  UpdateMeMutationVariables
 >;
 export const GetAllTripsDocument = gql`
   query GetAllTrips {

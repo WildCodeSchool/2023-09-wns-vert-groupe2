@@ -26,7 +26,7 @@ const CreateTrip = () => {
   const [createTrip, { loading, error, data }] = useCreateTripMutation({
     onCompleted: (data) => {
       if (data) {
-        toast.success("Voyage créé avec succès");
+        toast.success("Opération réussie!");
         router.push(`/trips/${data.createTrip.id}`);
       } else {
         toast.error("Une erreur est survenue :");

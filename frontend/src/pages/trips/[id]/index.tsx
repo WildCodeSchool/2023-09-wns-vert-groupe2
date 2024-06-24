@@ -14,7 +14,7 @@ function UpdateTripPage() {
   if (!id) return <Loader />;
   return (
     <>
-      {isLoggedIn === true && me?.id === 0 ? (
+      {isLoggedIn === true && me?.id === 3 ? (
         <UpdateTrip tripId={parseInt(id as string)} />
       ) : (
         <TripPassangerView tripId={parseInt(id as string)} />

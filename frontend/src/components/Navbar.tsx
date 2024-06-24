@@ -1,17 +1,21 @@
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+  Divider,
+} from "@mui/material";
+
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,13 +26,12 @@ const pages = [
   { label: "Proposer un trajet", url: "/trips/create" },
 ];
 const settings = [
-  { label: "Mon compte", url: "/account" },
+  { label: "Mon compte", url: "account" },
   { label: "Mes trajets", url: "/account/journey" },
 ];
 
 export default function Navbar() {
   const router = useRouter();
-
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -193,7 +196,12 @@ export default function Navbar() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Ouvrir les paramètres">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    alt={me.email}
+                    src={
+                      "https://www.fakepersongenerator.com/Face/male/male20151083651693268.jpg"
+                    }
+                  />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -214,7 +222,7 @@ export default function Navbar() {
               >
                 <MenuItem>
                   <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
-                    Hello {me.email} !
+                    Hello {me.firstname !== "" ? me.firstname : me.email} !
                   </Typography>
                 </MenuItem>
                 <Divider />

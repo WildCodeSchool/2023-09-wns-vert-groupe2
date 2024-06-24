@@ -1,17 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
+
 import { useRouter } from "next/router";
 import { useRegisterMutation } from "@/gql/graphql";
 
@@ -41,7 +45,7 @@ export default function RegisterPage() {
       });
       if (data && data.register && data.register.token) {
         localStorage.setItem("token", data.register.token);
-        router.push("/register");
+        router.push("/");
       }
     } catch (e) {
       console.error("Registration error:", e);
@@ -91,7 +95,7 @@ export default function RegisterPage() {
                 name="email"
                 autoComplete="email"
                 onChange={(e) =>
-                  setDateRegister({ ...dataRegister, password: e.target.value })
+                  setDateRegister({ ...dataRegister, email: e.target.value })
                 }
               />
             </Grid>
@@ -106,7 +110,7 @@ export default function RegisterPage() {
                 id="password"
                 autoComplete="new-password"
                 onChange={(e) =>
-                  setDateRegister({ ...dataRegister, email: e.target.value })
+                  setDateRegister({ ...dataRegister, password: e.target.value })
                 }
               />
             </Grid>
@@ -117,7 +121,7 @@ export default function RegisterPage() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            {loading ? <CircularProgress /> : "Sign Up"}
+            {loading ? <CircularProgress /> : "Inscription"}
           </Button>
           <Grid container>
             <Grid item>

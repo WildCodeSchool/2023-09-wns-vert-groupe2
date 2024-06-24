@@ -14,13 +14,16 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "mutation AddUserToTrip($tripId: Float!, $userId: Float!) {\n  addUserToTrip(tripId: $tripId, userId: $userId) {\n    id\n  }\n}": types.AddUserToTripDocument,
+    "mutation ChangePassword($input: UserChangePassword!) {\n  changeMyPassword(input: $input) {\n    id\n  }\n}": types.ChangePasswordDocument,
     "mutation CreateReview($rating: Int!, $comment: String!, $targetId: Int!) {\n  createReview(rating: $rating, comment: $comment, targetId: $targetId) {\n    id\n  }\n}": types.CreateReviewDocument,
     "mutation CreateTrip($data: TripInput!) {\n  createTrip(data: $data) {\n    id\n    date\n    price\n    status\n    startLocation\n    stopLocations\n    endLocation\n    driver\n    createdAt\n    updatedAt\n  }\n}": types.CreateTripDocument,
     "mutation DeleteTrip($id: Float!) {\n  deleteTrip(id: $id)\n}": types.DeleteTripDocument,
+    "mutation DeleteMe {\n  deleteMe\n}": types.DeleteMeDocument,
     "mutation Login($input: UserLoginInput!) {\n  login(input: $input) {\n    token\n  }\n}": types.LoginDocument,
-    "query Me {\n  me {\n    id\n    email\n  }\n}": types.MeDocument,
+    "query Me {\n  me {\n    id\n    email\n    firstname\n    lastname\n    description\n    birthdate\n    phoneNumber\n    pictureUrl\n  }\n}": types.MeDocument,
     "mutation Register($input: UserRegisterInput!) {\n  register(input: $input) {\n    token\n  }\n}": types.RegisterDocument,
     "mutation UpdateTrip($id: Float!, $data: TripUpdateInput!) {\n  updateTrip(id: $id, data: $data) {\n    id\n    date\n    price\n    status\n    startLocation\n    stopLocations\n    endLocation\n    driver\n    createdAt\n    updatedAt\n  }\n}": types.UpdateTripDocument,
+    "mutation UpdateMe($input: UserUpdateMe!) {\n  updateMe(input: $input) {\n    firstname\n    lastname\n    phoneNumber\n    birthdate\n    description\n    pictureUrl\n  }\n}": types.UpdateMeDocument,
     "query GetAllTrips {\n  trips {\n    id\n    date\n    price\n    status\n    startLocation\n    stopLocations\n    endLocation\n    driver\n    createdAt\n    updatedAt\n    passengers {\n      id\n      email\n    }\n  }\n}": types.GetAllTripsDocument,
     "query GetReviewsForUser($userId: Int!) {\n  reviewsForUser(userId: $userId) {\n    id\n    rating\n    comment\n    author {\n      id\n      email\n    }\n  }\n}": types.GetReviewsForUserDocument,
     "query getTripsByDateAndLocations($date: DateTimeISO!, $startLocation: String!, $stopLocations: String!) {\n  getTripsByDateAndLocations(\n    date: $date\n    startLocation: $startLocation\n    stopLocations: $stopLocations\n  ) {\n    id\n    date\n    price\n    status\n    startLocation\n    stopLocations\n    endLocation\n    driver\n    createdAt\n    updatedAt\n    passengers {\n      id\n      email\n    }\n  }\n}": types.GetTripsByDateAndLocationsDocument,
@@ -47,6 +50,10 @@ export function graphql(source: "mutation AddUserToTrip($tripId: Float!, $userId
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "mutation ChangePassword($input: UserChangePassword!) {\n  changeMyPassword(input: $input) {\n    id\n  }\n}"): (typeof documents)["mutation ChangePassword($input: UserChangePassword!) {\n  changeMyPassword(input: $input) {\n    id\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "mutation CreateReview($rating: Int!, $comment: String!, $targetId: Int!) {\n  createReview(rating: $rating, comment: $comment, targetId: $targetId) {\n    id\n  }\n}"): (typeof documents)["mutation CreateReview($rating: Int!, $comment: String!, $targetId: Int!) {\n  createReview(rating: $rating, comment: $comment, targetId: $targetId) {\n    id\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -59,11 +66,15 @@ export function graphql(source: "mutation DeleteTrip($id: Float!) {\n  deleteTri
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "mutation DeleteMe {\n  deleteMe\n}"): (typeof documents)["mutation DeleteMe {\n  deleteMe\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "mutation Login($input: UserLoginInput!) {\n  login(input: $input) {\n    token\n  }\n}"): (typeof documents)["mutation Login($input: UserLoginInput!) {\n  login(input: $input) {\n    token\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Me {\n  me {\n    id\n    email\n  }\n}"): (typeof documents)["query Me {\n  me {\n    id\n    email\n  }\n}"];
+export function graphql(source: "query Me {\n  me {\n    id\n    email\n    firstname\n    lastname\n    description\n    birthdate\n    phoneNumber\n    pictureUrl\n  }\n}"): (typeof documents)["query Me {\n  me {\n    id\n    email\n    firstname\n    lastname\n    description\n    birthdate\n    phoneNumber\n    pictureUrl\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -72,6 +83,10 @@ export function graphql(source: "mutation Register($input: UserRegisterInput!) {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation UpdateTrip($id: Float!, $data: TripUpdateInput!) {\n  updateTrip(id: $id, data: $data) {\n    id\n    date\n    price\n    status\n    startLocation\n    stopLocations\n    endLocation\n    driver\n    createdAt\n    updatedAt\n  }\n}"): (typeof documents)["mutation UpdateTrip($id: Float!, $data: TripUpdateInput!) {\n  updateTrip(id: $id, data: $data) {\n    id\n    date\n    price\n    status\n    startLocation\n    stopLocations\n    endLocation\n    driver\n    createdAt\n    updatedAt\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation UpdateMe($input: UserUpdateMe!) {\n  updateMe(input: $input) {\n    firstname\n    lastname\n    phoneNumber\n    birthdate\n    description\n    pictureUrl\n  }\n}"): (typeof documents)["mutation UpdateMe($input: UserUpdateMe!) {\n  updateMe(input: $input) {\n    firstname\n    lastname\n    phoneNumber\n    birthdate\n    description\n    pictureUrl\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
