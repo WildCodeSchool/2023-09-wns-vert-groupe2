@@ -84,14 +84,19 @@ export class TripResolver {
   @Mutation(() => Trip)
   async addAPassanger(
     @Arg("id") id: string,
-    @Arg("passengerId") passengerId: string
+    @Arg("passengerId") passengerId: string,
+    @Ctx() ctx: UserContext
   ): Promise<Trip | null> {
     try {
+      if (passengerId !== ctx.user.id && ctx?.user.isAdmin === false)
+        // Seul un passager s'ajouter à un voyage
+        throw Error("Not authorized");
       const trip = await Trip.findOne({
         where: { id },
         relations: ["passengers"],
       });
       if (!trip) throw Error("Trip not found");
+
       const existingPassenger = trip.passengers.find(
         (passenger) => passenger.id === passengerId
       );
@@ -120,7 +125,8 @@ export class TripResolver {
   @Mutation(() => Trip)
   async removeAPassanger(
     @Arg("id") id: string,
-    @Arg("passengerId") passengerId: string
+    @Arg("passengerId") passengerId: string,
+    @Ctx() ctx: UserContext
   ): Promise<Trip | null> {
     try {
       const trip = await Trip.findOne({
@@ -128,6 +134,11 @@ export class TripResolver {
         relations: ["passengers"],
       });
       if (!trip) throw Error("Trip not found");
+      if (
+        (passengerId !== ctx.user.id && ctx?.user.isAdmin === false) ||
+        (trip.driver.id !== ctx.user.id && ctx?.user.isAdmin === false)
+      )
+        throw Error("Not authorized");
       const passenger = await User.findOne({ where: { id: passengerId } });
       if (!passenger) throw Error("User not found");
       if (trip.passengers.length === 0)
