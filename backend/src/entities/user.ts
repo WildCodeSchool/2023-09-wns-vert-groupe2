@@ -67,6 +67,18 @@ export class User extends BaseEntity {
   })
   reviews: Review[];
 
+@Field(() => [Review])
+	@OneToMany(() => Review, (review) => review.author, {
+		onDelete: 'CASCADE',
+	})
+	reviewsAsAuthor: Review[];
+
+	@Field(() => [Review])
+	@OneToMany(() => Review, (review) => review.target, {
+		onDelete: 'CASCADE',
+	})
+	reviewsAsTarget: Review[];
+
   @Field(() => [Trip])
   @OneToMany(() => Trip, (trip) => trip.driver, {
     onDelete: "CASCADE",
