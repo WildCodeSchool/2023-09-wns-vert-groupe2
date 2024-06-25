@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   ManyToMany,
   JoinTable,
+  ManyToOne,
 } from "typeorm";
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./user";
@@ -15,8 +16,8 @@ import { User } from "./user";
 @Entity()
 export class Trip extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Field()
   @Column()
@@ -27,8 +28,12 @@ export class Trip extends BaseEntity {
   price: number;
 
   @Field()
-  @Column()
+  @Column({ default: "created" })
   status: string;
+
+  @Field()
+  @Column()
+  numberOfPassangers: number;
 
   @Field()
   @Column()
@@ -49,9 +54,11 @@ export class Trip extends BaseEntity {
   @JoinTable()
   passengers: User[];
 
-  @Field()
-  @Column()
-  driver: number;
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.tripsAsDriver, {
+    onDelete: "CASCADE",
+  })
+  driver: User;
 
   @CreateDateColumn()
   @Field()

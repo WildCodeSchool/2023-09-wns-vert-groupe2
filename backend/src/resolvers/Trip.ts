@@ -11,7 +11,7 @@ export class TripResolver {
   async trips(): Promise<Trip[]> {
     try {
       // Ici c pour récupérer tous les voyages depuis la base de données
-      return Trip.find({ relations: ["passengers"] });
+      return Trip.find({ relations: ["passengers", "driver"] });
     } catch (error) {
       console.error(
         "Une erreur s'est produite lors de la récupération des voyages :",
@@ -41,8 +41,7 @@ export class TripResolver {
 
       const trip = await Trip.save({
         ...data,
-        driver: ctx.user.id,
-        passengers: [user],
+        driver: user,
       });
 
       return trip;
@@ -58,7 +57,7 @@ export class TripResolver {
   // Ici c pour mettre à jour un voyage existant
   @Mutation(() => Trip)
   async updateTrip(
-    @Arg("id") id: number,
+    @Arg("id") id: string,
     @Arg("data") data: TripUpdateInput
   ): Promise<Trip | null> {
     try {
@@ -82,9 +81,81 @@ export class TripResolver {
     }
   }
 
+  @Mutation(() => Trip)
+  async addAPassanger(
+    @Arg("id") id: string,
+    @Arg("passengerId") passengerId: string
+  ): Promise<Trip | null> {
+    try {
+      const trip = await Trip.findOne({
+        where: { id },
+        relations: ["passengers"],
+      });
+      if (!trip) throw Error("Trip not found");
+      const existingPassenger = trip.passengers.find(
+        (passenger) => passenger.id === passengerId
+      );
+      if (existingPassenger) {
+        throw new Error("Passenger is already added to this trip");
+      }
+      const passenger = await User.findOne({ where: { id: passengerId } });
+      if (!passenger) throw Error("User not found");
+      if (
+        trip.passengers.length === trip.numberOfPassangers ||
+        trip.status === "fulled"
+      )
+        throw Error("No place available for this trip");
+      trip.passengers.push(passenger);
+      trip.status = "fulled";
+      await trip.save();
+      return trip;
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de l'ajout d'un passager :",
+        error
+      );
+      throw error;
+    }
+  }
+  @Mutation(() => Trip)
+  async removeAPassanger(
+    @Arg("id") id: string,
+    @Arg("passengerId") passengerId: string
+  ): Promise<Trip | null> {
+    try {
+      const trip = await Trip.findOne({
+        where: { id },
+        relations: ["passengers"],
+      });
+      if (!trip) throw Error("Trip not found");
+      const passenger = await User.findOne({ where: { id: passengerId } });
+      if (!passenger) throw Error("User not found");
+      if (trip.passengers.length === 0)
+        throw Error("No passenger in this trip");
+
+      const passengerIndex = trip.passengers.findIndex(
+        (passenger) => passenger.id === passengerId
+      );
+      if (passengerIndex === -1) {
+        throw new Error("Passenger is not part of this trip");
+      }
+
+      trip.passengers.splice(passengerIndex, 1);
+      trip.status = "created";
+
+      await trip.save();
+      return trip;
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la suppression d'un passager :",
+        error
+      );
+      throw error;
+    }
+  }
   // Ici c pour supprimer un voyage
   @Mutation(() => Boolean)
-  async deleteTrip(@Arg("id") id: number): Promise<boolean> {
+  async deleteTrip(@Arg("id") id: string): Promise<boolean> {
     try {
       const trip = await Trip.findOne({ where: { id } });
       if (!trip) return false;
@@ -104,17 +175,34 @@ export class TripResolver {
   async getTripsByDateAndLocations(
     @Arg("date") date: Date,
     @Arg("startLocation") startLocation: string,
-    @Arg("stopLocations") stopLocations: string
+    @Arg("endLocation") endLocation: string
   ): Promise<Trip[]> {
     try {
       const trips = await Trip.find({
         where: {
           date,
           startLocation,
-          stopLocations,
+          endLocation,
         },
       });
       return trips;
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la récupération des voyages :",
+        error
+      );
+      throw error;
+    }
+  }
+  @Query(() => Trip)
+  async getTripById(@Arg("id") id: string): Promise<Trip> {
+    try {
+      const trip = await Trip.findOne({
+        where: { id },
+        relations: ["passengers", "driver"],
+      });
+      if (!trip) throw Error("Trip not found");
+      return trip;
     } catch (error) {
       console.error(
         "Une erreur s'est produite lors de la récupération des voyages :",
