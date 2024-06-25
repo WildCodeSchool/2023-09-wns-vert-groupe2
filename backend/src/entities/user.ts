@@ -17,8 +17,8 @@ import { Review } from "./review";
 @Entity()
 export class User extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Field()
   @Column({ unique: true })
@@ -62,6 +62,12 @@ export class User extends BaseEntity {
   trips: Trip[];
 
   @Field(() => [Review])
+  @OneToMany(() => Review, (review) => review.user, {
+    onDelete: "CASCADE",
+  })
+  reviews: Review[];
+
+  @Field(() => [Review])
   @OneToMany(() => Review, (review) => review.author, {
     onDelete: "CASCADE",
   })
@@ -72,6 +78,12 @@ export class User extends BaseEntity {
     onDelete: "CASCADE",
   })
   reviewsAsTarget: Review[];
+
+  @Field(() => [Trip])
+  @OneToMany(() => Trip, (trip) => trip.driver, {
+    onDelete: "CASCADE",
+  })
+  tripsAsDriver: Trip[];
 
   @CreateDateColumn()
   @Field()
