@@ -157,7 +157,7 @@ export class UserResolver {
       throw new Error("Failed to fetch user: " + error.message);
     }
   }
-
+  
   @Mutation(() => User)
   async changeMyPassword(
     @Arg("input") input: UserChangePassword,
@@ -192,4 +192,5 @@ export class UserResolver {
       throw new Error("Failed to change password: " + error.message);
     }
   }
+
 }

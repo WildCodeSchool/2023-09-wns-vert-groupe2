@@ -80,4 +80,5 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
+
 }

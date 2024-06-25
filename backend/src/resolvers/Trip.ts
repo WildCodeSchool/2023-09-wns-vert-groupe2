@@ -31,13 +31,11 @@ export class TripResolver {
       throw new Error("Not authenticated!");
     }
     try {
-      const user = await User.findOne({
+      const user = await User.findOneOrFail({
         where: {
           id: ctx.user.id,
         },
       });
-
-      if (!user) throw new Error("User not found!");
 
       const trip = await Trip.save({
         ...data,
