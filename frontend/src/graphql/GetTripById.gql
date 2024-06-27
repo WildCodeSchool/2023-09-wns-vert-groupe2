@@ -1,5 +1,5 @@
-query GetAllTrips {
-  trips {
+query getTripById($id: String!) {
+  getTripById(id: $id) {
     id
     date
     price
@@ -10,8 +10,6 @@ query GetAllTrips {
     driver {
       id
       email
-      firstname
-      lastname
     }
     createdAt
     updatedAt

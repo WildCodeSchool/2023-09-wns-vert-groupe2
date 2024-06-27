@@ -1,6 +1,7 @@
 import {
   GetAllTripsDocument,
   useDeleteTripMutation,
+  useGetTripByIdQuery,
   useUpdateTripMutation,
 } from "@/gql/graphql";
 import React, { useState } from "react";
@@ -21,7 +22,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 
-export default function UpdateTrip({ tripId }: { tripId: number }) {
+export default function UpdateTrip({ tripId }: { tripId: string }) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -30,13 +31,21 @@ export default function UpdateTrip({ tripId }: { tripId: number }) {
   const handleClose = () => {
     setOpen(false);
   };
+  const {
+    data: dataTrip,
+    loading: loadingTrip,
+    error: errorTrip,
+  } = useGetTripByIdQuery({
+    variables: { id: tripId },
+  });
+  const trip = dataTrip?.getTripById;
   const [formState, setFormState] = useState({
-    date: "",
-    price: 0,
-    status: "",
-    startLocation: "",
-    stopLocations: "",
-    endLocation: "",
+    date: trip?.date,
+    price: trip?.price,
+    status: trip?.status,
+    startLocation: trip?.startLocation,
+    stopLocations: trip?.stopLocations,
+    endLocation: trip?.endLocation,
   });
 
   const [updateTrip, { data, loading, error }] = useUpdateTripMutation({

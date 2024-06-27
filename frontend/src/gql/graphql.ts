@@ -42,7 +42,7 @@ export type AuthenticatedUser = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  addUserToTrip: Trip;
+  addAPassanger: Trip;
   changeMyPassword: User;
   createReview: Review;
   createTrip: Trip;
@@ -52,15 +52,16 @@ export type Mutation = {
   deleteUser: Scalars["String"]["output"];
   login: AuthenticatedUser;
   register: AuthenticatedUser;
+  removeAPassanger: Trip;
   updateMe: User;
   updateRoleForUser: User;
   updateTrip: Trip;
   updateUser: User;
 };
 
-export type MutationAddUserToTripArgs = {
-  tripId: Scalars["Float"]["input"];
-  userId: Scalars["Float"]["input"];
+export type MutationAddAPassangerArgs = {
+  id: Scalars["String"]["input"];
+  passengerId: Scalars["String"]["input"];
 };
 
 export type MutationChangeMyPasswordArgs = {
@@ -82,7 +83,7 @@ export type MutationDeleteReviewArgs = {
 };
 
 export type MutationDeleteTripArgs = {
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
 };
 
 export type MutationDeleteUserArgs = {
@@ -97,26 +98,32 @@ export type MutationRegisterArgs = {
   input: UserRegisterInput;
 };
 
+export type MutationRemoveAPassangerArgs = {
+  id: Scalars["String"]["input"];
+  passengerId: Scalars["String"]["input"];
+};
+
 export type MutationUpdateMeArgs = {
   input: UserUpdateMe;
 };
 
 export type MutationUpdateRoleForUserArgs = {
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
 };
 
 export type MutationUpdateTripArgs = {
   data: TripUpdateInput;
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
 };
 
 export type MutationUpdateUserArgs = {
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
   input: UserUpdateAdmin;
 };
 
 export type Query = {
   __typename?: "Query";
+  getTripById: Trip;
   getTripsByDateAndLocations: Array<Trip>;
   getUserById: User;
   me: User;
@@ -126,14 +133,18 @@ export type Query = {
   users: Array<User>;
 };
 
+export type QueryGetTripByIdArgs = {
+  id: Scalars["String"]["input"];
+};
+
 export type QueryGetTripsByDateAndLocationsArgs = {
   date: Scalars["DateTimeISO"]["input"];
+  endLocation: Scalars["String"]["input"];
   startLocation: Scalars["String"]["input"];
-  stopLocations: Scalars["String"]["input"];
 };
 
 export type QueryGetUserByIdArgs = {
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
 };
 
 export type QueryReviewsForUserArgs = {
@@ -156,9 +167,10 @@ export type Trip = {
   __typename?: "Trip";
   createdAt: Scalars["DateTimeISO"]["output"];
   date: Scalars["DateTimeISO"]["output"];
-  driver: Scalars["Float"]["output"];
+  driver: User;
   endLocation: Scalars["String"]["output"];
-  id: Scalars["Float"]["output"];
+  id: Scalars["String"]["output"];
+  numberOfPassengers: Scalars["Float"]["output"];
   passengers: Array<User>;
   price: Scalars["Float"]["output"];
   startLocation: Scalars["String"]["output"];
@@ -170,6 +182,7 @@ export type Trip = {
 export type TripInput = {
   date: Scalars["DateTimeISO"]["input"];
   endLocation: Scalars["String"]["input"];
+  numberOfPassengers: Scalars["Float"]["input"];
   price: Scalars["Float"]["input"];
   startLocation: Scalars["String"]["input"];
   status: Scalars["String"]["input"];
@@ -179,6 +192,7 @@ export type TripInput = {
 export type TripUpdateInput = {
   date?: InputMaybe<Scalars["DateTimeISO"]["input"]>;
   endLocation?: InputMaybe<Scalars["String"]["input"]>;
+  numberOfPassengers?: InputMaybe<Scalars["Float"]["input"]>;
   passengers?: InputMaybe<Array<Scalars["String"]["input"]>>;
   price?: InputMaybe<Scalars["Float"]["input"]>;
   startLocation?: InputMaybe<Scalars["String"]["input"]>;
@@ -193,7 +207,7 @@ export type User = {
   description: Scalars["String"]["output"];
   email: Scalars["String"]["output"];
   firstname: Scalars["String"]["output"];
-  id: Scalars["Float"]["output"];
+  id: Scalars["String"]["output"];
   isAdmin: Scalars["Boolean"]["output"];
   lastname: Scalars["String"]["output"];
   phoneNumber: Scalars["String"]["output"];
@@ -201,6 +215,7 @@ export type User = {
   reviewsAsAuthor: Array<Review>;
   reviewsAsTarget: Array<Review>;
   trips: Array<Trip>;
+  tripsAsDriver: Array<Trip>;
   updatedAt: Scalars["DateTimeISO"]["output"];
 };
 
@@ -216,6 +231,8 @@ export type UserLoginInput = {
 
 export type UserRegisterInput = {
   email: Scalars["String"]["input"];
+  firstname: Scalars["String"]["input"];
+  lastname: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
 };
 
@@ -238,14 +255,14 @@ export type UserUpdateMe = {
   pictureUrl: Scalars["String"]["input"];
 };
 
-export type AddUserToTripMutationVariables = Exact<{
-  tripId: Scalars["Float"]["input"];
-  userId: Scalars["Float"]["input"];
+export type AddAPassangerMutationVariables = Exact<{
+  id: Scalars["String"]["input"];
+  passengerId: Scalars["String"]["input"];
 }>;
 
-export type AddUserToTripMutation = {
+export type AddAPassangerMutation = {
   __typename?: "Mutation";
-  addUserToTrip: { __typename?: "Trip"; id: number };
+  addAPassanger: { __typename?: "Trip"; id: string };
 };
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -254,7 +271,7 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = {
   __typename?: "Mutation";
-  changeMyPassword: { __typename?: "User"; id: number };
+  changeMyPassword: { __typename?: "User"; id: string };
 };
 
 export type CreateReviewMutationVariables = Exact<{
@@ -276,21 +293,21 @@ export type CreateTripMutation = {
   __typename?: "Mutation";
   createTrip: {
     __typename?: "Trip";
-    id: number;
+    id: string;
     date: any;
     price: number;
     status: string;
     startLocation: string;
     stopLocations: string;
     endLocation: string;
-    driver: number;
     createdAt: any;
-    updatedAt: any;
+    numberOfPassengers: number;
+    driver: { __typename?: "User"; id: string; email: string };
   };
 };
 
 export type DeleteTripMutationVariables = Exact<{
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
 }>;
 
 export type DeleteTripMutation = {
@@ -301,6 +318,99 @@ export type DeleteTripMutation = {
 export type DeleteMeMutationVariables = Exact<{ [key: string]: never }>;
 
 export type DeleteMeMutation = { __typename?: "Mutation"; deleteMe: string };
+
+export type GetAllTripsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllTripsQuery = {
+  __typename?: "Query";
+  trips: Array<{
+    __typename?: "Trip";
+    id: string;
+    date: any;
+    price: number;
+    status: string;
+    startLocation: string;
+    stopLocations: string;
+    endLocation: string;
+    createdAt: any;
+    updatedAt: any;
+    driver: {
+      __typename?: "User";
+      id: string;
+      email: string;
+      firstname: string;
+      lastname: string;
+    };
+    passengers: Array<{ __typename?: "User"; id: string; email: string }>;
+  }>;
+};
+
+export type GetReviewsForUserQueryVariables = Exact<{
+  userId: Scalars["Int"]["input"];
+}>;
+
+export type GetReviewsForUserQuery = {
+  __typename?: "Query";
+  reviewsForUser: Array<{
+    __typename?: "Review";
+    id: number;
+    rating: number;
+    comment: string;
+    author: { __typename?: "User"; id: string; email: string };
+  }>;
+};
+
+export type GetTripByIdQueryVariables = Exact<{
+  id: Scalars["String"]["input"];
+}>;
+
+export type GetTripByIdQuery = {
+  __typename?: "Query";
+  getTripById: {
+    __typename?: "Trip";
+    id: string;
+    date: any;
+    price: number;
+    status: string;
+    startLocation: string;
+    stopLocations: string;
+    endLocation: string;
+    createdAt: any;
+    updatedAt: any;
+    driver: { __typename?: "User"; id: string; email: string };
+    passengers: Array<{ __typename?: "User"; id: string; email: string }>;
+  };
+};
+
+export type GetTripsByDateAndLocationsQueryVariables = Exact<{
+  date: Scalars["DateTimeISO"]["input"];
+  startLocation: Scalars["String"]["input"];
+  endLocation: Scalars["String"]["input"];
+}>;
+
+export type GetTripsByDateAndLocationsQuery = {
+  __typename?: "Query";
+  getTripsByDateAndLocations: Array<{
+    __typename?: "Trip";
+    id: string;
+    date: any;
+    price: number;
+    status: string;
+    startLocation: string;
+    stopLocations: string;
+    endLocation: string;
+    createdAt: any;
+    updatedAt: any;
+    driver: {
+      __typename?: "User";
+      id: string;
+      email: string;
+      firstname: string;
+      lastname: string;
+    };
+    passengers: Array<{ __typename?: "User"; id: string; email: string }>;
+  }>;
+};
 
 export type LoginMutationVariables = Exact<{
   input: UserLoginInput;
@@ -317,7 +427,7 @@ export type MeQuery = {
   __typename?: "Query";
   me: {
     __typename?: "User";
-    id: number;
+    id: string;
     email: string;
     firstname: string;
     lastname: string;
@@ -325,6 +435,18 @@ export type MeQuery = {
     birthdate: any;
     phoneNumber: string;
     pictureUrl: string;
+    reviewsAsTarget: Array<{
+      __typename?: "Review";
+      id: number;
+      rating: number;
+      comment: string;
+    }>;
+    reviewsAsAuthor: Array<{
+      __typename?: "Review";
+      id: number;
+      rating: number;
+      comment: string;
+    }>;
   };
 };
 
@@ -337,8 +459,18 @@ export type RegisterMutation = {
   register: { __typename?: "AuthenticatedUser"; token: string };
 };
 
+export type RemoveAPassangerMutationVariables = Exact<{
+  id: Scalars["String"]["input"];
+  passengerId: Scalars["String"]["input"];
+}>;
+
+export type RemoveAPassangerMutation = {
+  __typename?: "Mutation";
+  removeAPassanger: { __typename?: "Trip"; id: string };
+};
+
 export type UpdateTripMutationVariables = Exact<{
-  id: Scalars["Float"]["input"];
+  id: Scalars["String"]["input"];
   data: TripUpdateInput;
 }>;
 
@@ -346,16 +478,16 @@ export type UpdateTripMutation = {
   __typename?: "Mutation";
   updateTrip: {
     __typename?: "Trip";
-    id: number;
+    id: string;
     date: any;
     price: number;
     status: string;
     startLocation: string;
     stopLocations: string;
     endLocation: string;
-    driver: number;
     createdAt: any;
     updatedAt: any;
+    driver: { __typename?: "User"; id: string; email: string };
   };
 };
 
@@ -376,115 +508,56 @@ export type UpdateMeMutation = {
   };
 };
 
-export type GetAllTripsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetAllTripsQuery = {
-  __typename?: "Query";
-  trips: Array<{
-    __typename?: "Trip";
-    id: number;
-    date: any;
-    price: number;
-    status: string;
-    startLocation: string;
-    stopLocations: string;
-    endLocation: string;
-    driver: number;
-    createdAt: any;
-    updatedAt: any;
-    passengers: Array<{ __typename?: "User"; id: number; email: string }>;
-  }>;
-};
-
-export type GetReviewsForUserQueryVariables = Exact<{
-  userId: Scalars["Int"]["input"];
-}>;
-
-export type GetReviewsForUserQuery = {
-  __typename?: "Query";
-  reviewsForUser: Array<{
-    __typename?: "Review";
-    id: number;
-    rating: number;
-    comment: string;
-    author: { __typename?: "User"; id: number; email: string };
-  }>;
-};
-
-export type GetTripsByDateAndLocationsQueryVariables = Exact<{
-  date: Scalars["DateTimeISO"]["input"];
-  startLocation: Scalars["String"]["input"];
-  stopLocations: Scalars["String"]["input"];
-}>;
-
-export type GetTripsByDateAndLocationsQuery = {
-  __typename?: "Query";
-  getTripsByDateAndLocations: Array<{
-    __typename?: "Trip";
-    id: number;
-    date: any;
-    price: number;
-    status: string;
-    startLocation: string;
-    stopLocations: string;
-    endLocation: string;
-    driver: number;
-    createdAt: any;
-    updatedAt: any;
-    passengers: Array<{ __typename?: "User"; id: number; email: string }>;
-  }>;
-};
-
-export const AddUserToTripDocument = gql`
-  mutation AddUserToTrip($tripId: Float!, $userId: Float!) {
-    addUserToTrip(tripId: $tripId, userId: $userId) {
+export const AddAPassangerDocument = gql`
+  mutation addAPassanger($id: String!, $passengerId: String!) {
+    addAPassanger(id: $id, passengerId: $passengerId) {
       id
     }
   }
 `;
-export type AddUserToTripMutationFn = Apollo.MutationFunction<
-  AddUserToTripMutation,
-  AddUserToTripMutationVariables
+export type AddAPassangerMutationFn = Apollo.MutationFunction<
+  AddAPassangerMutation,
+  AddAPassangerMutationVariables
 >;
 
 /**
- * __useAddUserToTripMutation__
+ * __useAddAPassangerMutation__
  *
- * To run a mutation, you first call `useAddUserToTripMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddUserToTripMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddAPassangerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddAPassangerMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addUserToTripMutation, { data, loading, error }] = useAddUserToTripMutation({
+ * const [addAPassangerMutation, { data, loading, error }] = useAddAPassangerMutation({
  *   variables: {
- *      tripId: // value for 'tripId'
- *      userId: // value for 'userId'
+ *      id: // value for 'id'
+ *      passengerId: // value for 'passengerId'
  *   },
  * });
  */
-export function useAddUserToTripMutation(
+export function useAddAPassangerMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AddUserToTripMutation,
-    AddUserToTripMutationVariables
+    AddAPassangerMutation,
+    AddAPassangerMutationVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useMutation<
-    AddUserToTripMutation,
-    AddUserToTripMutationVariables
-  >(AddUserToTripDocument, options);
+    AddAPassangerMutation,
+    AddAPassangerMutationVariables
+  >(AddAPassangerDocument, options);
 }
-export type AddUserToTripMutationHookResult = ReturnType<
-  typeof useAddUserToTripMutation
+export type AddAPassangerMutationHookResult = ReturnType<
+  typeof useAddAPassangerMutation
 >;
-export type AddUserToTripMutationResult =
-  Apollo.MutationResult<AddUserToTripMutation>;
-export type AddUserToTripMutationOptions = Apollo.BaseMutationOptions<
-  AddUserToTripMutation,
-  AddUserToTripMutationVariables
+export type AddAPassangerMutationResult =
+  Apollo.MutationResult<AddAPassangerMutation>;
+export type AddAPassangerMutationOptions = Apollo.BaseMutationOptions<
+  AddAPassangerMutation,
+  AddAPassangerMutationVariables
 >;
 export const ChangePasswordDocument = gql`
   mutation ChangePassword($input: UserChangePassword!) {
@@ -598,9 +671,12 @@ export const CreateTripDocument = gql`
       startLocation
       stopLocations
       endLocation
-      driver
+      driver {
+        id
+        email
+      }
       createdAt
-      updatedAt
+      numberOfPassengers
     }
   }
 `;
@@ -648,7 +724,7 @@ export type CreateTripMutationOptions = Apollo.BaseMutationOptions<
   CreateTripMutationVariables
 >;
 export const DeleteTripDocument = gql`
-  mutation DeleteTrip($id: Float!) {
+  mutation DeleteTrip($id: String!) {
     deleteTrip(id: $id)
   }
 `;
@@ -739,267 +815,6 @@ export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<
   DeleteMeMutation,
   DeleteMeMutationVariables
 >;
-export const LoginDocument = gql`
-  mutation Login($input: UserLoginInput!) {
-    login(input: $input) {
-      token
-    }
-  }
-`;
-export type LoginMutationFn = Apollo.MutationFunction<
-  LoginMutation,
-  LoginMutationVariables
->;
-
-/**
- * __useLoginMutation__
- *
- * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [loginMutation, { data, loading, error }] = useLoginMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useLoginMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    LoginMutation,
-    LoginMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(
-    LoginDocument,
-    options
-  );
-}
-export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
-export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
-export type LoginMutationOptions = Apollo.BaseMutationOptions<
-  LoginMutation,
-  LoginMutationVariables
->;
-export const MeDocument = gql`
-  query Me {
-    me {
-      id
-      email
-      firstname
-      lastname
-      description
-      birthdate
-      phoneNumber
-      pictureUrl
-    }
-  }
-`;
-
-/**
- * __useMeQuery__
- *
- * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMeQuery(
-  baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-}
-export function useMeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-}
-export function useMeSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<MeQuery, MeQueryVariables>(
-    MeDocument,
-    options
-  );
-}
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
-export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const RegisterDocument = gql`
-  mutation Register($input: UserRegisterInput!) {
-    register(input: $input) {
-      token
-    }
-  }
-`;
-export type RegisterMutationFn = Apollo.MutationFunction<
-  RegisterMutation,
-  RegisterMutationVariables
->;
-
-/**
- * __useRegisterMutation__
- *
- * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRegisterMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [registerMutation, { data, loading, error }] = useRegisterMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRegisterMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    RegisterMutation,
-    RegisterMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(
-    RegisterDocument,
-    options
-  );
-}
-export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
-export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
-export type RegisterMutationOptions = Apollo.BaseMutationOptions<
-  RegisterMutation,
-  RegisterMutationVariables
->;
-export const UpdateTripDocument = gql`
-  mutation UpdateTrip($id: Float!, $data: TripUpdateInput!) {
-    updateTrip(id: $id, data: $data) {
-      id
-      date
-      price
-      status
-      startLocation
-      stopLocations
-      endLocation
-      driver
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export type UpdateTripMutationFn = Apollo.MutationFunction<
-  UpdateTripMutation,
-  UpdateTripMutationVariables
->;
-
-/**
- * __useUpdateTripMutation__
- *
- * To run a mutation, you first call `useUpdateTripMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateTripMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateTripMutation, { data, loading, error }] = useUpdateTripMutation({
- *   variables: {
- *      id: // value for 'id'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdateTripMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    UpdateTripMutation,
-    UpdateTripMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<UpdateTripMutation, UpdateTripMutationVariables>(
-    UpdateTripDocument,
-    options
-  );
-}
-export type UpdateTripMutationHookResult = ReturnType<
-  typeof useUpdateTripMutation
->;
-export type UpdateTripMutationResult =
-  Apollo.MutationResult<UpdateTripMutation>;
-export type UpdateTripMutationOptions = Apollo.BaseMutationOptions<
-  UpdateTripMutation,
-  UpdateTripMutationVariables
->;
-export const UpdateMeDocument = gql`
-  mutation UpdateMe($input: UserUpdateMe!) {
-    updateMe(input: $input) {
-      firstname
-      lastname
-      phoneNumber
-      birthdate
-      description
-      pictureUrl
-    }
-  }
-`;
-export type UpdateMeMutationFn = Apollo.MutationFunction<
-  UpdateMeMutation,
-  UpdateMeMutationVariables
->;
-
-/**
- * __useUpdateMeMutation__
- *
- * To run a mutation, you first call `useUpdateMeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateMeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateMeMutation, { data, loading, error }] = useUpdateMeMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateMeMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    UpdateMeMutation,
-    UpdateMeMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<UpdateMeMutation, UpdateMeMutationVariables>(
-    UpdateMeDocument,
-    options
-  );
-}
-export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
-export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
-export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<
-  UpdateMeMutation,
-  UpdateMeMutationVariables
->;
 export const GetAllTripsDocument = gql`
   query GetAllTrips {
     trips {
@@ -1010,7 +825,12 @@ export const GetAllTripsDocument = gql`
       startLocation
       stopLocations
       endLocation
-      driver
+      driver {
+        id
+        email
+        firstname
+        lastname
+      }
       createdAt
       updatedAt
       passengers {
@@ -1166,16 +986,107 @@ export type GetReviewsForUserQueryResult = Apollo.QueryResult<
   GetReviewsForUserQuery,
   GetReviewsForUserQueryVariables
 >;
+export const GetTripByIdDocument = gql`
+  query getTripById($id: String!) {
+    getTripById(id: $id) {
+      id
+      date
+      price
+      status
+      startLocation
+      stopLocations
+      endLocation
+      driver {
+        id
+        email
+      }
+      createdAt
+      updatedAt
+      passengers {
+        id
+        email
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetTripByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTripByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTripByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTripByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTripByIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetTripByIdQuery,
+    GetTripByIdQueryVariables
+  > &
+    (
+      | { variables: GetTripByIdQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetTripByIdQuery, GetTripByIdQueryVariables>(
+    GetTripByIdDocument,
+    options
+  );
+}
+export function useGetTripByIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetTripByIdQuery,
+    GetTripByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetTripByIdQuery, GetTripByIdQueryVariables>(
+    GetTripByIdDocument,
+    options
+  );
+}
+export function useGetTripByIdSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    GetTripByIdQuery,
+    GetTripByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetTripByIdQuery, GetTripByIdQueryVariables>(
+    GetTripByIdDocument,
+    options
+  );
+}
+export type GetTripByIdQueryHookResult = ReturnType<typeof useGetTripByIdQuery>;
+export type GetTripByIdLazyQueryHookResult = ReturnType<
+  typeof useGetTripByIdLazyQuery
+>;
+export type GetTripByIdSuspenseQueryHookResult = ReturnType<
+  typeof useGetTripByIdSuspenseQuery
+>;
+export type GetTripByIdQueryResult = Apollo.QueryResult<
+  GetTripByIdQuery,
+  GetTripByIdQueryVariables
+>;
 export const GetTripsByDateAndLocationsDocument = gql`
   query getTripsByDateAndLocations(
     $date: DateTimeISO!
     $startLocation: String!
-    $stopLocations: String!
+    $endLocation: String!
   ) {
     getTripsByDateAndLocations(
       date: $date
       startLocation: $startLocation
-      stopLocations: $stopLocations
+      endLocation: $endLocation
     ) {
       id
       date
@@ -1184,7 +1095,12 @@ export const GetTripsByDateAndLocationsDocument = gql`
       startLocation
       stopLocations
       endLocation
-      driver
+      driver {
+        id
+        email
+        firstname
+        lastname
+      }
       createdAt
       updatedAt
       passengers {
@@ -1209,7 +1125,7 @@ export const GetTripsByDateAndLocationsDocument = gql`
  *   variables: {
  *      date: // value for 'date'
  *      startLocation: // value for 'startLocation'
- *      stopLocations: // value for 'stopLocations'
+ *      endLocation: // value for 'endLocation'
  *   },
  * });
  */
@@ -1265,4 +1181,329 @@ export type GetTripsByDateAndLocationsSuspenseQueryHookResult = ReturnType<
 export type GetTripsByDateAndLocationsQueryResult = Apollo.QueryResult<
   GetTripsByDateAndLocationsQuery,
   GetTripsByDateAndLocationsQueryVariables
+>;
+export const LoginDocument = gql`
+  mutation Login($input: UserLoginInput!) {
+    login(input: $input) {
+      token
+    }
+  }
+`;
+export type LoginMutationFn = Apollo.MutationFunction<
+  LoginMutation,
+  LoginMutationVariables
+>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useLoginMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    LoginMutation,
+    LoginMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(
+    LoginDocument,
+    options
+  );
+}
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<
+  LoginMutation,
+  LoginMutationVariables
+>;
+export const MeDocument = gql`
+  query Me {
+    me {
+      id
+      email
+      firstname
+      lastname
+      description
+      birthdate
+      phoneNumber
+      pictureUrl
+      reviewsAsTarget {
+        id
+        rating
+        comment
+      }
+      reviewsAsAuthor {
+        id
+        rating
+        comment
+      }
+    }
+  }
+`;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(
+  baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export function useMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export function useMeSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<MeQuery, MeQueryVariables>(
+    MeDocument,
+    options
+  );
+}
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const RegisterDocument = gql`
+  mutation Register($input: UserRegisterInput!) {
+    register(input: $input) {
+      token
+    }
+  }
+`;
+export type RegisterMutationFn = Apollo.MutationFunction<
+  RegisterMutation,
+  RegisterMutationVariables
+>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRegisterMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RegisterMutation,
+    RegisterMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(
+    RegisterDocument,
+    options
+  );
+}
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<
+  RegisterMutation,
+  RegisterMutationVariables
+>;
+export const RemoveAPassangerDocument = gql`
+  mutation removeAPassanger($id: String!, $passengerId: String!) {
+    removeAPassanger(id: $id, passengerId: $passengerId) {
+      id
+    }
+  }
+`;
+export type RemoveAPassangerMutationFn = Apollo.MutationFunction<
+  RemoveAPassangerMutation,
+  RemoveAPassangerMutationVariables
+>;
+
+/**
+ * __useRemoveAPassangerMutation__
+ *
+ * To run a mutation, you first call `useRemoveAPassangerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveAPassangerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeAPassangerMutation, { data, loading, error }] = useRemoveAPassangerMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      passengerId: // value for 'passengerId'
+ *   },
+ * });
+ */
+export function useRemoveAPassangerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveAPassangerMutation,
+    RemoveAPassangerMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RemoveAPassangerMutation,
+    RemoveAPassangerMutationVariables
+  >(RemoveAPassangerDocument, options);
+}
+export type RemoveAPassangerMutationHookResult = ReturnType<
+  typeof useRemoveAPassangerMutation
+>;
+export type RemoveAPassangerMutationResult =
+  Apollo.MutationResult<RemoveAPassangerMutation>;
+export type RemoveAPassangerMutationOptions = Apollo.BaseMutationOptions<
+  RemoveAPassangerMutation,
+  RemoveAPassangerMutationVariables
+>;
+export const UpdateTripDocument = gql`
+  mutation UpdateTrip($id: String!, $data: TripUpdateInput!) {
+    updateTrip(id: $id, data: $data) {
+      id
+      date
+      price
+      status
+      startLocation
+      stopLocations
+      endLocation
+      driver {
+        id
+        email
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export type UpdateTripMutationFn = Apollo.MutationFunction<
+  UpdateTripMutation,
+  UpdateTripMutationVariables
+>;
+
+/**
+ * __useUpdateTripMutation__
+ *
+ * To run a mutation, you first call `useUpdateTripMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTripMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTripMutation, { data, loading, error }] = useUpdateTripMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateTripMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateTripMutation,
+    UpdateTripMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateTripMutation, UpdateTripMutationVariables>(
+    UpdateTripDocument,
+    options
+  );
+}
+export type UpdateTripMutationHookResult = ReturnType<
+  typeof useUpdateTripMutation
+>;
+export type UpdateTripMutationResult =
+  Apollo.MutationResult<UpdateTripMutation>;
+export type UpdateTripMutationOptions = Apollo.BaseMutationOptions<
+  UpdateTripMutation,
+  UpdateTripMutationVariables
+>;
+export const UpdateMeDocument = gql`
+  mutation UpdateMe($input: UserUpdateMe!) {
+    updateMe(input: $input) {
+      firstname
+      lastname
+      phoneNumber
+      birthdate
+      description
+      pictureUrl
+    }
+  }
+`;
+export type UpdateMeMutationFn = Apollo.MutationFunction<
+  UpdateMeMutation,
+  UpdateMeMutationVariables
+>;
+
+/**
+ * __useUpdateMeMutation__
+ *
+ * To run a mutation, you first call `useUpdateMeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMeMutation, { data, loading, error }] = useUpdateMeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateMeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateMeMutation,
+    UpdateMeMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateMeMutation, UpdateMeMutationVariables>(
+    UpdateMeDocument,
+    options
+  );
+}
+export type UpdateMeMutationHookResult = ReturnType<typeof useUpdateMeMutation>;
+export type UpdateMeMutationResult = Apollo.MutationResult<UpdateMeMutation>;
+export type UpdateMeMutationOptions = Apollo.BaseMutationOptions<
+  UpdateMeMutation,
+  UpdateMeMutationVariables
 >;

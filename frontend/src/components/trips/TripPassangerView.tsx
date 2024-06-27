@@ -1,14 +1,27 @@
 import { Button, Container, Divider, Paper, Typography } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useAddUserToTripMutation } from "@/gql/graphql";
 import { useContext } from "react";
 import { AuthContext } from "@/providers/AuthProvider";
 import Link from "next/link";
 import { toast } from "react-toast";
+import { useAddAPassangerMutation, useGetTripByIdQuery } from "@/gql/graphql";
+import { format } from "date-fns";
+import Loader from "../Loader";
 
-export default function TripPassangerView({ tripId }: { tripId: number }) {
+export default function TripPassangerView({ tripId }: { tripId: string }) {
   const { me, isLoggedIn } = useContext(AuthContext);
-  const [addUserOnTrip, { loading, error, data }] = useAddUserToTripMutation();
+  const {
+    data: dataTrip,
+    loading: loadingTrip,
+    error: errorTrip,
+  } = useGetTripByIdQuery({ variables: { id: tripId } });
+  const [addUserOnTrip, { loading, error, data }] = useAddAPassangerMutation();
+  const trip = dataTrip?.getTripById;
+  let dateOfTrip = "";
+  if (trip !== undefined) {
+    dateOfTrip = format(new Date(trip?.date), "dd-MM-yyyy");
+  }
+  if (loading) return <Loader />;
   return (
     <Container maxWidth="sm">
       <Paper
@@ -20,12 +33,12 @@ export default function TripPassangerView({ tripId }: { tripId: number }) {
         }}
       >
         <Typography variant="h3" align="center" sx={{ marginBottom: "5px" }}>
-          Trajet du 22-07-2024
+          Trajet du {dateOfTrip}
         </Typography>
         <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Typography>Strasbourg</Typography>
+          <Typography>{trip?.startLocation}</Typography>
           <ArrowForwardIcon fontSize="small" style={{ margin: "0 2rem" }} />
-          <Typography>Lièges</Typography>
+          <Typography>{trip?.endLocation}</Typography>
         </div>
         <div
           style={{
@@ -37,12 +50,12 @@ export default function TripPassangerView({ tripId }: { tripId: number }) {
           <Typography sx={{ marginRight: ".5rem" }}>
             <b>Arrêts Prévus :</b>
           </Typography>
-          <Typography>Bordeaux, Paris</Typography>
+          <Typography>{trip?.stopLocations}</Typography>
         </div>
         <Divider />
         <div style={{ marginTop: "1rem" }}>
           <Typography>
-            Le Trajet est assuré par : Bob KELSSO (4.5 étoiles)
+            Le Trajet est assuré par : {trip?.driver.email}
           </Typography>
           <Typography style={{ marginTop: ".5rem" }}>
             <b>Informations complementaires</b>
@@ -51,7 +64,7 @@ export default function TripPassangerView({ tripId }: { tripId: number }) {
             - Trajet non fumeur <br />- Deux Places à l&apos;arrière
           </Typography>
           <Typography style={{ marginTop: ".5rem" }}>
-            Prix à régler : 40€
+            Prix à régler : {trip?.price}
           </Typography>
         </div>
         <div
@@ -62,22 +75,26 @@ export default function TripPassangerView({ tripId }: { tripId: number }) {
           }}
         >
           {isLoggedIn ? (
-            <Button
-              onClick={async () => {
-                try {
-                  await addUserOnTrip({
-                    variables: { tripId: tripId, userId: me?.id as number },
-                  });
-                  toast.success("Vous avez été ajouter au trajet");
-                } catch (error) {
-                  console.log(error);
-                  toast.error("Une erreur est survenue");
-                }
-              }}
-              variant="outlined"
-            >
-              Choisir ce trajet
-            </Button>
+            trip?.status === "open" || trip?.status === "created" ? (
+              <Button
+                onClick={async () => {
+                  try {
+                    await addUserOnTrip({
+                      variables: { id: tripId, passengerId: me?.id as string },
+                    });
+                    toast.success("Vous avez été ajouter au trajet");
+                  } catch (error) {
+                    console.log(error);
+                    toast.error("Une erreur est survenue");
+                  }
+                }}
+                variant="outlined"
+              >
+                Choisir ce trajet
+              </Button>
+            ) : (
+              <Typography>Trajet déjà complet</Typography>
+            )
           ) : (
             <Link href={"/login"}>Connectez vous pour choisir ce trajet</Link>
           )}

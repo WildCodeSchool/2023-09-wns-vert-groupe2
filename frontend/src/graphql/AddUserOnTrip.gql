@@ -1,5 +1,0 @@
-mutation AddUserToTrip($tripId: Float!, $userId: Float!) {
-  addUserToTrip(tripId: $tripId, userId: $userId) {
-    id
-  }
-}

@@ -12,7 +12,7 @@ export class TripUpdateInput {
   status?: string;
 
   @Field({ nullable: true })
-  numberOfPassangers?: number;
+  numberOfPassengers?: number;
 
   @Field({ nullable: true })
   startLocation?: string;

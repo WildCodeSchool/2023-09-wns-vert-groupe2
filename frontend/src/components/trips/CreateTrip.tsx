@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   TextField,
   Button,
@@ -17,6 +17,7 @@ const CreateTrip = () => {
   const [formState, setFormState] = useState({
     date: "",
     price: 0,
+    numberOfPassengers: 0,
     status: "created",
     startLocation: "",
     stopLocations: "",
@@ -35,7 +36,7 @@ const CreateTrip = () => {
     refetchQueries: [{ query: GetAllTripsDocument }],
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formattedDate = new Date(formState.date).toISOString();
@@ -50,6 +51,7 @@ const CreateTrip = () => {
       date: "",
       price: 0,
       status: "created",
+      numberOfPassengers: 0,
       startLocation: "",
       stopLocations: "",
       endLocation: "",
@@ -83,7 +85,6 @@ const CreateTrip = () => {
             placeholder="Select date"
             style={{ marginBottom: "20px" }}
           />
-
           <TextField
             fullWidth
             type="text"
@@ -124,6 +125,20 @@ const CreateTrip = () => {
             value={formState.price}
             onChange={(e) =>
               setFormState({ ...formState, price: parseFloat(e.target.value) })
+            }
+            placeholder="Enter price"
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            fullWidth
+            type="number"
+            label="Nombre de passagers max."
+            value={formState.numberOfPassengers}
+            onChange={(e) =>
+              setFormState({
+                ...formState,
+                numberOfPassengers: parseFloat(e.target.value),
+              })
             }
             placeholder="Enter price"
             style={{ marginBottom: "20px" }}

@@ -80,13 +80,12 @@ export class UserResolver {
   @Query(() => User)
   async me(@Ctx() ctx: UserContext): Promise<User> {
     checkIfRegistered(ctx.user);
-
     try {
       const authenticatedUser = await User.findOne({
         where: {
           id: ctx.user.id,
         },
-        relations: ["reviews", "trips"],
+        relations: ["reviewsAsAuthor", "reviewsAsTarget", "trips"],
       });
 
       if (!authenticatedUser) {
@@ -157,7 +156,7 @@ export class UserResolver {
       throw new Error("Failed to fetch user: " + error.message);
     }
   }
-  
+
   @Mutation(() => User)
   async changeMyPassword(
     @Arg("input") input: UserChangePassword,
@@ -192,5 +191,4 @@ export class UserResolver {
       throw new Error("Failed to change password: " + error.message);
     }
   }
-
 }

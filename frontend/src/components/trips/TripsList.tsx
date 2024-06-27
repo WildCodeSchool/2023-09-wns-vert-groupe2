@@ -28,13 +28,13 @@ export default function TripsList({
   const { data: searchData, loading: searchLoading } =
     useGetTripsByDateAndLocationsQuery({
       variables: {
-        date: new Date(),
-        startLocation: "",
-        stopLocations: "",
+        date: search.date,
+        startLocation: search.start || "",
+        endLocation: search.end || "",
       },
     });
   const trips = data?.trips;
-
+  const tripsSearch = searchData?.getTripsByDateAndLocations;
   return (
     <div
       style={{
@@ -117,25 +117,33 @@ export default function TripsList({
             </div>
           </CardContent>
         </Card>
-        {loading && <Loader />}
-        {!loading &&
-          trips &&
+        {!loading && tripsSearch ? (
+          tripsSearch.map((trip, index: number) => {
+            return <TripCard key={index} trip={trip} />;
+          })
+        ) : !loading && trips ? (
           trips.map((trip, index: number) => {
             return <TripCard key={index} trip={trip} />;
-          })}
+          })
+        ) : (
+          <Loader />
+        )}
       </div>
     </div>
   );
 }
 interface Trip {
-  id: number;
+  id: string;
   date: Date;
   price: number;
   status: string;
   startLocation: string;
   stopLocations: string;
   endLocation: string;
-  driver: number;
+  driver: {
+    id: string;
+    email: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -186,7 +194,9 @@ function TripCard({ trip }: { trip: Trip }) {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Typography>{trip.price} €</Typography>
             <div>
-              <Typography>Proposé par le Chauffeur {trip.driver}</Typography>
+              <Typography>
+                Proposé par le Chauffeur {trip.driver.email}
+              </Typography>
             </div>
           </div>
         </CardContent>

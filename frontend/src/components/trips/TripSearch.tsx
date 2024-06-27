@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 export interface SearchBar {
   start?: string;
   end?: string;
-  date?: Date;
+  date?: string;
   orderBy?: "price" | "hours" | "duration";
 }
 
@@ -39,9 +39,10 @@ export default function TripSearchBar({
           variant="outlined"
         />
         <TextField
+          type="date"
           sx={{ m: "1rem", bgcolor: "background.paper", borderRadius: "15px" }}
-          label="Date"
           value={search.date}
+          onChange={(e) => setSearch({ ...search, date: e.target.value })}
           variant="outlined"
         />
 

@@ -2,11 +2,10 @@ import { useMeLazyQuery } from "@/gql/graphql";
 import React, { ReactElement, createContext, useEffect, useState } from "react";
 
 interface AuthContextType {
-  //signIn: (token: string) => void;
   isLoggedIn: boolean;
   signOut: () => void;
   me?: {
-    id?: number;
+    id?: string;
     email?: string;
     firstname?: string;
     lastname?: string;
@@ -15,27 +14,36 @@ interface AuthContextType {
     phoneNumber?: string;
     pictureUrl?: string;
   } | null;
+  setMe: React.Dispatch<
+    React.SetStateAction<{
+      id?: string | undefined;
+      email?: string | undefined;
+      firstname?: string | undefined;
+      lastname?: string | undefined;
+      description?: string | undefined;
+      birthdate?: Date | undefined;
+      phoneNumber?: string | undefined;
+      pictureUrl?: string | undefined;
+    } | null>
+  >;
 }
 
-export const AuthContext = createContext({} as AuthContextType);
+export const AuthContext = createContext<AuthContextType>(
+  {} as AuthContextType
+);
 
 export const AuthProvider = ({ children }: { children: ReactElement }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
-  const [me, setMe] = useState<
-    | {
-        id?: number;
-        email?: string;
-        firstname?: string;
-        lastname?: string;
-        description?: string;
-        birthdate?: Date;
-        phoneNumber?: string;
-        pictureUrl?: string;
-      }
-    | undefined
-    | null
-  >(undefined);
+  const [me, setMe] = useState<{
+    id?: string;
+    email?: string;
+    firstname?: string;
+    lastname?: string;
+    description?: string;
+    birthdate?: Date;
+    phoneNumber?: string;
+    pictureUrl?: string;
+  } | null>(null);
 
   const [loadMe, { data, error }] = useMeLazyQuery({
     fetchPolicy: "network-only",
@@ -49,15 +57,15 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
           await loadMe();
         } catch (err) {
           console.error("Failed to fetch user data:", err);
-          setHasAccess(false);
+          setIsLoggedIn(false);
         }
       } else {
-        setHasAccess(false);
+        setIsLoggedIn(false);
       }
     };
 
     checkLoggedIn();
-  }, [isLoggedIn, loadMe]);
+  }, [loadMe]);
 
   useEffect(() => {
     if (data && data.me) {
@@ -71,18 +79,15 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
         phoneNumber: data.me.phoneNumber,
         pictureUrl: data.me.pictureUrl,
       });
-
-      setHasAccess(true);
       setIsLoggedIn(true);
     } else if (error) {
       setMe(null);
-      setHasAccess(false);
+      setIsLoggedIn(false);
     }
   }, [data, error]);
 
   const signOut = () => {
     localStorage.removeItem("token");
-    setHasAccess(false);
     setMe(null);
     setIsLoggedIn(false);
   };
@@ -90,8 +95,8 @@ export const AuthProvider = ({ children }: { children: ReactElement }) => {
   return (
     <AuthContext.Provider
       value={{
-        //signIn,
         signOut,
+        setMe,
         me,
         isLoggedIn,
       }}

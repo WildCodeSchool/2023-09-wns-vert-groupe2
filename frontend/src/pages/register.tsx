@@ -40,7 +40,12 @@ export default function RegisterPage() {
       e.preventDefault();
       const { data } = await register({
         variables: {
-          input: { email: dataRegister.email, password: dataRegister.password },
+          input: {
+            email: dataRegister.email,
+            password: dataRegister.password,
+            firstname: dataRegister.firstName ? dataRegister.firstName : "",
+            lastname: dataRegister.lastName ? dataRegister.lastName : "",
+          },
         },
       });
       if (data && data.register && data.register.token) {
@@ -99,7 +104,6 @@ export default function RegisterPage() {
                 }
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 required
@@ -111,6 +115,37 @@ export default function RegisterPage() {
                 autoComplete="new-password"
                 onChange={(e) =>
                   setDateRegister({ ...dataRegister, password: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="lastName"
+                label="Nom"
+                type="lastName"
+                id="lastName"
+                autoComplete="new-lastName"
+                onChange={(e) =>
+                  setDateRegister({ ...dataRegister, lastName: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="firstName"
+                label="Prénom"
+                type="firstName"
+                id="firstName"
+                autoComplete="new-firstName"
+                onChange={(e) =>
+                  setDateRegister({
+                    ...dataRegister,
+                    firstName: e.target.value,
+                  })
                 }
               />
             </Grid>

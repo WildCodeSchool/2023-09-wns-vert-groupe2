@@ -7,8 +7,11 @@ mutation CreateTrip($data: TripInput!) {
     startLocation
     stopLocations
     endLocation
-    driver
+    driver {
+      id
+      email
+    }
     createdAt
-    updatedAt
+    numberOfPassengers
   }
 }

@@ -8,5 +8,15 @@ query Me {
     birthdate
     phoneNumber
     pictureUrl
+    reviewsAsTarget {
+      id
+      rating
+      comment
+    }
+    reviewsAsAuthor {
+      id
+      rating
+      comment
+    }
   }
 }

@@ -15,9 +15,9 @@ function UpdateTripPage() {
   return (
     <>
       {isLoggedIn === true && me?.id === 3 ? (
-        <UpdateTrip tripId={parseInt(id as string)} />
+        <UpdateTrip tripId={id as string} />
       ) : (
-        <TripPassangerView tripId={parseInt(id as string)} />
+        <TripPassangerView tripId={id as string} />
       )}
     </>
   );

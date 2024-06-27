@@ -1,12 +1,12 @@
 query getTripsByDateAndLocations(
   $date: DateTimeISO!
   $startLocation: String!
-  $stopLocations: String!
+  $endLocation: String!
 ) {
   getTripsByDateAndLocations(
     date: $date
     startLocation: $startLocation
-    stopLocations: $stopLocations
+    endLocation: $endLocation
   ) {
     id
     date
@@ -15,7 +15,12 @@ query getTripsByDateAndLocations(
     startLocation
     stopLocations
     endLocation
-    driver
+    driver {
+      id
+      email
+      firstname
+      lastname
+    }
     createdAt
     updatedAt
     passengers {
