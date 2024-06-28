@@ -1,0 +1,5 @@
+mutation addAPassanger($id: String!, $passengerId: String!) {
+  addAPassanger(id: $id, passengerId: $passengerId) {
+    id
+  }
+}

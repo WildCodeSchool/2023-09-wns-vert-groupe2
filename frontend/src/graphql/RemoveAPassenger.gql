@@ -1,0 +1,5 @@
+mutation removeAPassanger($id: String!, $passengerId: String!) {
+  removeAPassanger(id: $id, passengerId: $passengerId) {
+    id
+  }
+}

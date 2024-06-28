@@ -1,0 +1,22 @@
+query Me {
+  me {
+    id
+    email
+    firstname
+    lastname
+    description
+    birthdate
+    phoneNumber
+    pictureUrl
+    reviewsAsTarget {
+      id
+      rating
+      comment
+    }
+    reviewsAsAuthor {
+      id
+      rating
+      comment
+    }
+  }
+}

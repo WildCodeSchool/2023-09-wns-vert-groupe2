@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useContext, useState } from "react";
 import {
   Avatar,
   Button,
@@ -13,25 +12,14 @@ import {
   Alert,
   Link,
 } from "@mui/material";
-
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-
-import Copyright from "@/components/Copyright";
-
-import { useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import { ME } from "@/graphql/queries/user";
-import { setCurrentUser } from "@/slices/userSlice";
-import { LOGIN_MUTATION } from "@/graphql/mutations/user";
+import { useLoginMutation } from "@/gql/graphql";
 
 export default function LoginPage() {
-  const dispatch = useDispatch();
-  const client = useApolloClient();
-    
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
+  const [login, { data, loading, error }] = useLoginMutation();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -42,15 +30,7 @@ export default function LoginPage() {
       });
       if (data && data.login && data.login.token) {
         localStorage.setItem("token", data.login.token);
-
-        const { data: userData } = await client.query({
-          query: ME,
-          fetchPolicy: "network-only",
-        });
-
-        dispatch(setCurrentUser(userData.me));
-
-        router.push("/");
+        router.replace("/");
       }
     } catch (e) {
       console.error("Registration error:", e);
@@ -81,12 +61,12 @@ export default function LoginPage() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Connexion
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           {error && <Alert severity="error">Error: {error.message}</Alert>}
           {data && data.login && data.login && (
-            <Alert severity="success">Login successfull ! Redirecting...</Alert>
+            <Alert severity="success">Connexion Réussié! Redirection...</Alert>
           )}
           <Grid container spacing={2} mt={0.5}>
             <Grid item xs={12}>
@@ -94,7 +74,7 @@ export default function LoginPage() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Email"
                 name="email"
                 autoComplete="email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -105,7 +85,7 @@ export default function LoginPage() {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Mot de Passe"
                 type="password"
                 id="password"
                 autoComplete="new-password"
@@ -119,18 +99,17 @@ export default function LoginPage() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            {loading ? <CircularProgress /> : "Sign In"}
+            {loading ? <CircularProgress /> : "Connexion"}
           </Button>
           <Grid container>
             <Grid item>
               <Link href="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
+                {"Pas encore inscrit ?  Rejoignez nous"}
               </Link>
             </Grid>
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
 }

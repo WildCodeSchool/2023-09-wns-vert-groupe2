@@ -12,7 +12,6 @@ import {
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./user";
 
-
 @ObjectType()
 @Entity()
 export class Trip extends BaseEntity {
@@ -34,7 +33,7 @@ export class Trip extends BaseEntity {
 
   @Field()
   @Column()
-  numberOfPassangers: number;
+  numberOfPassengers: number;
 
   @Field()
   @Column()
@@ -50,7 +49,7 @@ export class Trip extends BaseEntity {
 
   @Field(() => [User])
   @ManyToMany(() => User, (user) => user.trips, {
-    onDelete: 'CASCADE',
+    onDelete: "CASCADE",
   })
   @JoinTable()
   passengers: User[];

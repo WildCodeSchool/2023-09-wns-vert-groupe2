@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useContext, FormEvent } from "react";
 import {
   Alert,
   Container,
@@ -22,49 +21,38 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-
 import LoadingButton from "@mui/lab/LoadingButton";
-
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
-import { useMutation } from "@apollo/client";
-import { useRouter } from "next/router";
-
-import { useDispatch, useSelector } from "react-redux";
-
 import {
-  CHANGE_PASSWORD_MUTATION,
-  DELETE_ME_MUTATION,
-  UPDATE_ME_MUTATION,
-} from "@/graphql/mutations/user";
-
+  MeDocument,
+  useChangePasswordMutation,
+  useDeleteMeMutation,
+  useUpdateMeMutation,
+} from "@/gql/graphql";
+import { useRouter } from "next/router";
 import { updateCurrentUser } from "@/slices/userSlice";
-
+import { AuthContext } from "@/providers/AuthProvider";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import { toast } from "react-toast";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(localizedFormat);
 
 export default function Account() {
   const router = useRouter();
-  const dispatch = useDispatch();
-
-  const me = useSelector((state) => state.user.currentUser);
-
-  const [firstname, setFirstname] = useState(me?.firstname || "");
-  const [lastname, setLastname] = useState(me?.lastname || "");
-  const [phoneNumber, setPhoneNumber] = useState(me?.phoneNumber || "");
-  const [description, setDescription] = useState(me?.description || "");
-  const [birthdate, setBirthdate] = useState(
-    me?.birthdate ? dayjs(me.birthdate) : ""
-  );
-
-  const [pictureUrl, setPictureUrl] = useState("");
-
+  const { me, setMe } = useContext(AuthContext);
+  const [formMe, setFormMe] = useState({
+    firstName: me?.firstname || "",
+    lastName: me?.lastname || "",
+    phoneNumber: me?.phoneNumber || "",
+    description: me?.description || "",
+    birthdate: me?.birthdate || "",
+    pictureUrl: me?.pictureUrl || "",
+  });
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordRepeat, setShowPasswordRepeat] = useState(false);
@@ -75,26 +63,22 @@ export default function Account() {
   const [
     updateMe,
     { data: dataUpdateMe, loading: loadingUpdateMe, error: errorUpdateMe },
-  ] = useMutation(UPDATE_ME_MUTATION);
+  ] = useUpdateMeMutation({ refetchQueries: [{ query: MeDocument }] });
 
-  const [changeMyPassword, { data, loading, error }] = useMutation(
-    CHANGE_PASSWORD_MUTATION
-  );
-
+  const [changeMyPassword, { data, loading, error }] =
+    useChangePasswordMutation({ refetchQueries: [{ query: MeDocument }] });
   const [
     deleteMe,
     { data: dataDeleteMe, loading: loadingDeleteMe, error: errorDeleteMe },
-  ] = useMutation(DELETE_ME_MUTATION, {
+  ] = useDeleteMeMutation({
     onCompleted: () => {
       handleCloseModal();
       localStorage.removeItem("token");
       router.push("/login");
     },
   });
-
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       router.push("/login");
     }
@@ -107,31 +91,37 @@ export default function Account() {
     setOpen(false);
   };
 
-  const handleSubmitUpdateMe = async (e) => {
+  const handleSubmitUpdateMe = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formattedDate = new Date(formMe.birthdate).toISOString();
+
+    const meData = {
+      ...formMe,
+      birthdate: formattedDate,
+    };
     try {
-      e.preventDefault();
       const { data } = await updateMe({
         variables: {
           input: {
-            firstname,
-            lastname,
-            phoneNumber,
-            description,
-            birthdate: birthdate.toISOString(),
-            pictureUrl,
+            firstname: meData?.firstName,
+            lastname: meData?.lastName,
+            birthdate: meData?.birthdate,
+            phoneNumber: meData?.phoneNumber,
+            pictureUrl: meData?.pictureUrl,
+            description: meData?.description,
           },
         },
       });
-
       if (data && data.updateMe) {
-        dispatch(updateCurrentUser(data.updateMe));
+        setMe(data?.updateMe);
       }
-    } catch (e) {
-      console.error("Update me error:", e);
+    } catch (error) {
+      console.log(error);
+      toast.error("Une erreur est survenue");
     }
   };
 
-  const handleSubmitNewPassword = async (e) => {
+  const handleSubmitNewPassword = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       await changeMyPassword({
@@ -156,31 +146,29 @@ export default function Account() {
   const handleClickShowPasswordRepeat = () =>
     setShowPasswordRepeat((show) => !show);
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
-  const handleMouseDownPasswordRepeat = (event) => {
+  const handleMouseDownPasswordRepeat = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
 
   return (
     <>
       <Container component="main" maxWidth="md">
-        <Card>
+        <Card sx={{ backgroundColor: "#FFFFFF" }}>
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography gutterBottom variant="h4" component="div">
               Mon compte
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Vos informations personnelles.
             </Typography>
-
-            <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmitUpdateMe}
-              sx={{ mt: 3 }}
-            >
+            <form onSubmit={handleSubmitUpdateMe}>
               <Grid container spacing={2} mt={0.5}>
                 <Grid item xs={12}>
                   {dataUpdateMe && dataUpdateMe.updateMe && (
@@ -190,7 +178,7 @@ export default function Account() {
                   )}
 
                   {errorUpdateMe && (
-                    <Alert severity="error">Erreur : {error.message}</Alert>
+                    <Alert severity="error">Erreur : {error?.message}</Alert>
                   )}
                 </Grid>
 
@@ -201,8 +189,10 @@ export default function Account() {
                     id="firstname"
                     label="Prénom"
                     name="firstname"
-                    value={firstname}
-                    onChange={(e) => setFirstname(e.target.value)}
+                    value={formMe?.firstName}
+                    onChange={(e) =>
+                      setFormMe({ ...formMe, firstName: e.target.value })
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -212,8 +202,10 @@ export default function Account() {
                     id="lastname"
                     label="Nom"
                     name="lastname"
-                    value={lastname}
-                    onChange={(e) => setLastname(e.target.value)}
+                    value={formMe?.lastName}
+                    onChange={(e) =>
+                      setFormMe({ ...formMe, lastName: e.target.value })
+                    }
                   />
                 </Grid>
 
@@ -223,19 +215,27 @@ export default function Account() {
                     id="phoneNumber"
                     label="Téléphone"
                     name="phoneNumber"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={formMe?.phoneNumber}
+                    onChange={(e) =>
+                      setFormMe({ ...formMe, phoneNumber: e.target.value })
+                    }
                   />
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                  <DatePicker
+                  <TextField
                     fullWidth
-                    label="Date de naissance"
-                    format="DD/MM/YYYY"
-                    sx={{ width: "100%" }}
-                    value={birthdate}
-                    onChange={(newValue) => setBirthdate(newValue)}
+                    type="date"
+                    label="Jour de départ"
+                    value={formMe?.birthdate}
+                    onChange={(e) =>
+                      setFormMe({ ...formMe, birthdate: e.target.value })
+                    }
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    placeholder="Select date"
+                    style={{ marginBottom: "20px" }}
                   />
                 </Grid>
 
@@ -246,11 +246,12 @@ export default function Account() {
                     label="Description"
                     multiline
                     rows={4}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={formMe?.description}
+                    onChange={(e) =>
+                      setFormMe({ ...formMe, description: e.target.value })
+                    }
                   />
                 </Grid>
-
                 <Grid item xs={12} container justifyContent="flex-end">
                   <LoadingButton
                     type="submit"
@@ -261,7 +262,7 @@ export default function Account() {
                   </LoadingButton>
                 </Grid>
               </Grid>
-            </Box>
+            </form>
 
             <Box>
               <Grid container spacing={2} mt={0.5}>
@@ -337,7 +338,6 @@ export default function Account() {
                       endAdornment={
                         <InputAdornment position="end">
                           <IconButton
-                            aria-label="toggle password visibility"
                             onClick={handleClickShowPasswordRepeat}
                             onMouseDown={handleMouseDownPasswordRepeat}
                             edge="end"
@@ -400,7 +400,7 @@ export default function Account() {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Cette action est irréversible et supprimera définitivement votre
-            compte. Aucun retour en arrière n'est possible.
+            compte. Aucun retour en arrière n&apos;est possible.
           </DialogContentText>
         </DialogContent>
 
