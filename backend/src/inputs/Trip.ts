@@ -3,9 +3,6 @@ import { Field, InputType } from "type-graphql";
 @InputType()
 export class TripInput {
   @Field()
-  id: string;
-
-  @Field()
   date: Date;
 
   @Field()

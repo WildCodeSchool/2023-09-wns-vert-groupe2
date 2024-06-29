@@ -62,22 +62,16 @@ export class User extends BaseEntity {
   trips: Trip[];
 
   @Field(() => [Review])
-  @OneToMany(() => Review, (review) => review.user, {
+  @OneToMany(() => Review, (review) => review.author, {
     onDelete: "CASCADE",
   })
-  reviews: Review[];
+  reviewsAsAuthor: Review[];
 
-@Field(() => [Review])
-	@OneToMany(() => Review, (review) => review.author, {
-		onDelete: 'CASCADE',
-	})
-	reviewsAsAuthor: Review[];
-
-	@Field(() => [Review])
-	@OneToMany(() => Review, (review) => review.target, {
-		onDelete: 'CASCADE',
-	})
-	reviewsAsTarget: Review[];
+  @Field(() => [Review])
+  @OneToMany(() => Review, (review) => review.target, {
+    onDelete: "CASCADE",
+  })
+  reviewsAsTarget: Review[];
 
   @Field(() => [Trip])
   @OneToMany(() => Trip, (trip) => trip.driver, {
@@ -92,5 +86,4 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   @Field()
   updatedAt: Date;
-
 }
