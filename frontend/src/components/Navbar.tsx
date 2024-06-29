@@ -16,29 +16,22 @@ import {
 } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-import { useDispatch, useSelector } from "react-redux";
-import { clearCurrentUser } from "@/slices/userSlice";
+import { AuthContext } from "@/providers/AuthProvider";
 
 const pages = [
-  { label: "Trouver un trajet", url: "/trips" },
-  { label: "Proposer un trajet", url: "/journeys/create" },
+  { label: "Trouver un trajet", url: "trips" },
+  { label: "Proposer un trajet", url: "trips/create" },
 ];
 const settings = [
   { label: "Mon compte", url: "account" },
-  { label: "Mes trajets", url: "/account/journey" },
+  { label: "Mes trajets", url: "account/journey" },
 ];
 
 export default function Navbar() {
   const router = useRouter();
-
-  const dispatch = useDispatch();
-  const me = useSelector((state) => state.user.currentUser);
-
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -61,17 +54,28 @@ export default function Navbar() {
     setAnchorElUser(null);
   };
 
-  const handleLogout = async () => {
-    localStorage.removeItem("token");
-    dispatch(clearCurrentUser());
-    router.push("/login");
-  };
+  const { me, isLoggedIn, signOut } = React.useContext(AuthContext);
 
   return (
-    <AppBar>
+    <AppBar sx={{ bgcolor: "#114360" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              display: { xs: "none", md: "flex" },
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            GoD
+          </Typography>
           <Typography
             variant="h6"
             noWrap
@@ -83,11 +87,11 @@ export default function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#54F49A",
               textDecoration: "none",
             }}
           >
-            GoDrive
+            rive
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -130,9 +134,25 @@ export default function Navbar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant="h4"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              display: { xs: "flex", md: "none" },
+
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            GoD
+          </Typography>
+          <Typography
+            variant="h4"
             noWrap
             component="a"
             href="/"
@@ -143,29 +163,45 @@ export default function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "#54F49A",
               textDecoration: "none",
             }}
           >
-            GoDrive
+            rive
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "end",
+            }}
+          >
             {pages.map((page, index) => (
               <Button
                 key={index}
                 onClick={() => router.push(`/${page.url}`)}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  mx: "5 rem",
+                  color: "white",
+                  display: "block",
+                }}
               >
                 <Typography textAlign="center">{page.label}</Typography>
               </Button>
             ))}
           </Box>
 
-          {me ? (
+          {isLoggedIn && me ? (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Ouvrir les paramètres">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt={me.email} src={me.pictureUrl} />
+                  <Avatar
+                    alt={me.email}
+                    src={
+                      "https://www.fakepersongenerator.com/Face/male/male20151083651693268.jpg"
+                    }
+                  />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -184,9 +220,11 @@ export default function Navbar() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
-                  Hello {me.email} !
-                </Typography>
+                <MenuItem>
+                  <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
+                    Hello {me.firstname !== "" ? me.firstname : me.email} !
+                  </Typography>
+                </MenuItem>
                 <Divider />
                 {settings.map((setting, index) => (
                   <MenuItem
@@ -197,18 +235,18 @@ export default function Navbar() {
                   </MenuItem>
                 ))}
                 <Divider />
-                <MenuItem onClick={handleLogout}>
-                  <Typography textAlign="center">Log out</Typography>
+                <MenuItem onClick={() => signOut()}>
+                  <Typography>Se déconnecter</Typography>
                 </MenuItem>
               </Menu>
             </Box>
           ) : (
-            <Box>
+            <Box sx={{ marginLeft: "5px" }}>
               <Link href="/login">
-                <Button variant="contained">Login</Button>
+                <Button variant="contained">Se connecter</Button>
               </Link>
               <Link href="/register">
-                <Button variant="contained">Register</Button>
+                <Button variant="contained">S&apos;inscrire</Button>
               </Link>
             </Box>
           )}

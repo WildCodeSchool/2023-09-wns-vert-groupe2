@@ -80,7 +80,6 @@ export class UserResolver {
   @Query(() => User)
   async me(@Ctx() ctx: UserContext): Promise<User> {
     checkIfRegistered(ctx.user);
-
     try {
       const authenticatedUser = await User.findOne({
         where: {

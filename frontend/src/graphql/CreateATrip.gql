@@ -1,0 +1,17 @@
+mutation CreateTrip($data: TripInput!) {
+  createTrip(data: $data) {
+    id
+    date
+    price
+    status
+    startLocation
+    stopLocations
+    endLocation
+    driver {
+      id
+      email
+    }
+    createdAt
+    numberOfPassengers
+  }
+}

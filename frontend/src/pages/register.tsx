@@ -16,39 +16,40 @@ import {
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
-import Copyright from "@/components/Copyright";
-
-import { useMutation, useApolloClient } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import { ME } from "@/graphql/queries/user";
-import { setCurrentUser } from "@/slices/userSlice";
-import { REGISTER_MUTATION } from "@/graphql/mutations/user";
+import { useRegisterMutation } from "@/gql/graphql";
 
+interface RegisterData {
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  password: string;
+}
 export default function RegisterPage() {
-  const dispatch = useDispatch();
-  const client = useApolloClient();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [register, { data, loading, error }] = useMutation(REGISTER_MUTATION);
+  const [dataRegister, setDateRegister] = useState<RegisterData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const [register, { data, loading, error }] = useRegisterMutation();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
       const { data } = await register({
-        variables: { input: { email, password } },
+        variables: {
+          input: {
+            email: dataRegister.email,
+            password: dataRegister.password,
+            firstname: dataRegister.firstName ? dataRegister.firstName : "",
+            lastname: dataRegister.lastName ? dataRegister.lastName : "",
+          },
+        },
       });
       if (data && data.register && data.register.token) {
         localStorage.setItem("token", data.register.token);
-
-        const { data: userData } = await client.query({
-          query: ME,
-          fetchPolicy: "network-only",
-        });
-
-        dispatch(setCurrentUser(userData.me));
-        
         router.push("/");
       }
     } catch (e) {
@@ -80,13 +81,13 @@ export default function RegisterPage() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign up
+          Inscription
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           {error && <Alert severity="error">Error: {error.message}</Alert>}
           {data && data.register && data.register.token && (
             <Alert severity="success">
-              Registratrion successfull ! Redirecting...
+              Inscription réussie ! Redirection en cours...
             </Alert>
           )}
           <Grid container spacing={2} mt={0.5}>
@@ -95,10 +96,12 @@ export default function RegisterPage() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Adresse Email"
                 name="email"
                 autoComplete="email"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) =>
+                  setDateRegister({ ...dataRegister, email: e.target.value })
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -106,11 +109,44 @@ export default function RegisterPage() {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Mot de passe"
                 type="password"
                 id="password"
                 autoComplete="new-password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setDateRegister({ ...dataRegister, password: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="lastName"
+                label="Nom"
+                type="lastName"
+                id="lastName"
+                autoComplete="new-lastName"
+                onChange={(e) =>
+                  setDateRegister({ ...dataRegister, lastName: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="firstName"
+                label="Prénom"
+                type="firstName"
+                id="firstName"
+                autoComplete="new-firstName"
+                onChange={(e) =>
+                  setDateRegister({
+                    ...dataRegister,
+                    firstName: e.target.value,
+                  })
+                }
               />
             </Grid>
           </Grid>
@@ -120,18 +156,17 @@ export default function RegisterPage() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            {loading ? <CircularProgress /> : "Sign Up"}
+            {loading ? <CircularProgress /> : "Inscription"}
           </Button>
           <Grid container>
             <Grid item>
               <Link href="/login" variant="body2">
-                Already have an account? Sign in
+                Vous avez déjà un compte ? Connectez-vous
               </Link>
             </Grid>
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 10 }} />
     </Container>
   );
 }

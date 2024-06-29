@@ -1,0 +1,17 @@
+mutation UpdateTrip($id: String!, $data: TripUpdateInput!) {
+  updateTrip(id: $id, data: $data) {
+    id
+    date
+    price
+    status
+    startLocation
+    stopLocations
+    endLocation
+    driver {
+      id
+      email
+    }
+    createdAt
+    updatedAt
+  }
+}

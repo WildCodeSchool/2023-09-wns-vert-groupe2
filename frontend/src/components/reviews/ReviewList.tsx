@@ -1,8 +1,9 @@
-import { useQuery, gql } from '@apollo/client';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import StarIcon from '@mui/icons-material/Star';
-import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import { useQuery, gql } from "@apollo/client";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
+import StarIcon from "@mui/icons-material/Star";
+import { StarHalf } from "@mui/icons-material";
+import StarOutlineIcon from "@mui/icons-material/StarOutline";
 
 const RatingStars = ({ rating }: { rating: number }) => {
   const fullStars = Math.floor(rating);
@@ -14,7 +15,7 @@ const RatingStars = ({ rating }: { rating: number }) => {
       if (i < fullStars) {
         stars.push(<StarIcon key={i} />);
       } else if (i === fullStars && hasHalfStar) {
-        stars.push(<StarHalfIcon key={i} />);
+        stars.push(<StarHalf key={i} />);
       } else {
         stars.push(<StarOutlineIcon key={i} />);
       }
@@ -45,7 +46,7 @@ const ReviewList = ({ userId }: { userId: number }) => {
   });
 
   if (loading) return <CircularProgress />;
-  if (error) return <Alert severity='error'>Error: {error.message}</Alert>;
+  if (error) return <Alert severity="error">Error: {error.message}</Alert>;
 
   const userEmail = data.reviewsForUser[0]?.author?.email;
   const displayText = userEmail ? userEmail : `User ID: ${userId}`;

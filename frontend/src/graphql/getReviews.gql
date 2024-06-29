@@ -1,0 +1,11 @@
+query GetReviewsForUser($userId: Int!) {
+  reviewsForUser(userId: $userId) {
+    id
+    rating
+    comment
+    author {
+      id
+      email
+    }
+  }
+}

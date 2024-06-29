@@ -12,7 +12,7 @@ export class TripInput {
   status: string;
 
   @Field()
-  numberOfPassangers: number;
+  numberOfPassengers: number;
 
   @Field()
   startLocation: string;

@@ -122,7 +122,7 @@ export class TripResolver {
       const passenger = await User.findOne({ where: { id: passengerId } });
       if (!passenger) throw Error("User not found");
       if (
-        trip.passengers.length === trip.numberOfPassangers ||
+        trip.passengers.length === trip.numberOfPassengers ||
         trip.status === "fulled"
       )
         throw Error("No place available for this trip");
