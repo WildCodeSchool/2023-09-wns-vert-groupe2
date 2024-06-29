@@ -275,9 +275,6 @@ export class TripResolver {
         });
       }
 
-      console.log("=== OPTIONS ===", options);
-      console.log("=== SORT BY ===", sortBy);
-
       const trips = await Trip.find(options);
       return trips;
     } catch (error) {
