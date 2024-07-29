@@ -13,9 +13,7 @@ export class ReviewResolver {
   }
 
   @Query(() => [Review])
-  async reviewsForUser(
-    @Arg("userId", () => Int) userId: string
-  ): Promise<Review[]> {
+  async reviewsOfAUser(@Arg("userId") userId: string): Promise<Review[]> {
     const redisKey = `user:${userId}:reviews`;
 
     try {
@@ -43,7 +41,35 @@ export class ReviewResolver {
       throw new Error("Impossible de récupérer les critiques");
     }
   }
+  @Query(() => [Review])
+  async reviewsFromAUser(@Arg("userId") userId: string): Promise<Review[]> {
+    const redisKey = `user:${userId}:reviews`;
 
+    try {
+      const cachedReviews = await redisClient.get(redisKey);
+      if (cachedReviews !== null) {
+        console.log("Returning cached data:", cachedReviews);
+        return JSON.parse(cachedReviews);
+      } else {
+        const reviews = await Review.find({
+          where: {
+            author: {
+              id: userId,
+            },
+          },
+          relations: ["author", "target"],
+        });
+
+        console.log("Caching data:", JSON.stringify(reviews));
+        await redisClient.set(redisKey, JSON.stringify(reviews), { EX: 3600 });
+
+        return reviews;
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des critiques :", error);
+      throw new Error("Impossible de récupérer les critiques");
+    }
+  }
   @Mutation(() => Boolean)
   async deleteReview(
     @Arg("reviewId", () => Int) reviewId: number,

@@ -1,0 +1,14 @@
+query GetReviewsFromAUser($userId: String!) {
+  reviewsFromAUser(userId: $userId) {
+    id
+    rating
+    comment
+    type
+    createdAt
+    target {
+      id
+      firstname
+      lastname
+    }
+  }
+}

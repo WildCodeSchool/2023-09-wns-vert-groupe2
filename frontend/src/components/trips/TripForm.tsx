@@ -1,7 +1,6 @@
 import {
   GetAllTripsDocument,
   useDeleteTripMutation,
-  useGetTripByIdQuery,
   useUpdateTripMutation,
 } from "@/gql/graphql";
 import React, { useState } from "react";
@@ -15,14 +14,39 @@ import {
   Paper,
   Card,
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-import { useRouter } from "next/router";
 
-export default function UpdateTrip({ tripId }: { tripId: string }) {
+export default function UpdateTrip({
+  trip,
+}: {
+  trip: {
+    __typename?: "Trip";
+    id: string;
+    date: any;
+    price: number;
+    status: string;
+    startLocation: string;
+    stopLocations: string;
+    endLocation: string;
+    createdAt: any;
+    updatedAt: any;
+    driver: {
+      __typename?: "User";
+      id: string;
+      firstname: string;
+      lastname: string;
+    };
+    passengers: Array<{
+      __typename?: "User";
+      id: string;
+      firstname: string;
+      lastname: string;
+    }>;
+  };
+}) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -31,14 +55,7 @@ export default function UpdateTrip({ tripId }: { tripId: string }) {
   const handleClose = () => {
     setOpen(false);
   };
-  const {
-    data: dataTrip,
-    loading: loadingTrip,
-    error: errorTrip,
-  } = useGetTripByIdQuery({
-    variables: { id: tripId },
-  });
-  const trip = dataTrip?.getTripById;
+
   const [formState, setFormState] = useState({
     date: trip?.date,
     price: trip?.price,
@@ -69,7 +86,7 @@ export default function UpdateTrip({ tripId }: { tripId: string }) {
       ...formState,
       date: formattedDate,
     };
-    updateTrip({ variables: { id: tripId, data: tripData } });
+    updateTrip({ variables: { id: trip.id, data: tripData } });
   };
 
   return (
@@ -179,7 +196,7 @@ export default function UpdateTrip({ tripId }: { tripId: string }) {
                   <Button
                     onClick={() => {
                       try {
-                        deleteTrip({ variables: { id: tripId } });
+                        deleteTrip({ variables: { id: trip.id } });
                         toast.success("Le trajet a été supprimer avec succès");
                         setOpen(false);
                       } catch (error) {

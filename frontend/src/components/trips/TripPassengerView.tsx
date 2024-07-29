@@ -8,20 +8,38 @@ import { useAddAPassangerMutation, useGetTripByIdQuery } from "@/gql/graphql";
 import { format } from "date-fns";
 import Loader from "../Loader";
 
-export default function TripPassangerView({ tripId }: { tripId: string }) {
+export default function TripPassengerView({
+  trip,
+}: {
+  trip: {
+    __typename?: "Trip";
+    id: string;
+    date: any;
+    price: number;
+    status: string;
+    startLocation: string;
+    stopLocations: string;
+    endLocation: string;
+    createdAt: any;
+    updatedAt: any;
+    driver: {
+      __typename?: "User";
+      id: string;
+      firstname: string;
+      lastname: string;
+    };
+    passengers: Array<{
+      __typename?: "User";
+      id: string;
+      firstname: string;
+      lastname: string;
+    }>;
+  };
+}) {
   const { me, isLoggedIn } = useContext(AuthContext);
-  const {
-    data: dataTrip,
-    loading: loadingTrip,
-    error: errorTrip,
-  } = useGetTripByIdQuery({ variables: { id: tripId } });
   const [addUserOnTrip, { loading, error, data }] = useAddAPassangerMutation();
-  const trip = dataTrip?.getTripById;
-  let dateOfTrip = "";
-  if (trip !== undefined) {
-    dateOfTrip = format(new Date(trip?.date), "dd-MM-yyyy");
-  }
-  if (loading) return <Loader />;
+  const dateOfTrip = format(new Date(trip?.date), "dd-MM-yyyy");
+
   return (
     <Container maxWidth="sm">
       <Paper
@@ -55,7 +73,8 @@ export default function TripPassangerView({ tripId }: { tripId: string }) {
         <Divider />
         <div style={{ marginTop: "1rem" }}>
           <Typography>
-            Le Trajet est assuré par : {trip?.driver.email}
+            Le Trajet est assuré par : {trip?.driver.firstname}{" "}
+            {trip?.driver.lastname}
           </Typography>
           <Typography style={{ marginTop: ".5rem" }}>
             <b>Informations complementaires</b>
@@ -75,12 +94,12 @@ export default function TripPassangerView({ tripId }: { tripId: string }) {
           }}
         >
           {isLoggedIn ? (
-            trip?.status === "open" || trip?.status === "created" ? (
+            trip?.status === "pending" || trip?.status === "created" ? (
               <Button
                 onClick={async () => {
                   try {
                     await addUserOnTrip({
-                      variables: { id: tripId, passengerId: me?.id as string },
+                      variables: { id: trip.id, passengerId: me?.id as string },
                     });
                     toast.success("Vous avez été ajouter au trajet");
                   } catch (error) {

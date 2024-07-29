@@ -142,7 +142,8 @@ interface Trip {
   endLocation: string;
   driver: {
     id: string;
-    email: string;
+    firstname: string;
+    lastname: string;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -195,7 +196,7 @@ function TripCard({ trip }: { trip: Trip }) {
             <Typography>{trip.price} €</Typography>
             <div>
               <Typography>
-                Proposé par le Chauffeur {trip.driver.email}
+                Proposé par {trip.driver.firstname} {trip.driver.lastname}
               </Typography>
             </div>
           </div>

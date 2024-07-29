@@ -220,4 +220,36 @@ export class TripResolver {
       throw error;
     }
   }
+  @Query(() => [Trip])
+  async getAllTripsOfDriver(
+    @Arg("driverId") driverId: string
+  ): Promise<Trip[]> {
+    try {
+      const driver = await User.findOne({ where: { id: driverId } });
+      if (!driver) throw new Error("Driver not found");
+      return Trip.find({ where: { driver: { id: driverId } } });
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la récupération des voyages :",
+        error
+      );
+      throw error;
+    }
+  }
+  @Query(() => [Trip])
+  async getAllTripsOfPassenger(
+    @Arg("passengerId") passengerId: string
+  ): Promise<Trip[]> {
+    try {
+      const passenger = await User.findOne({ where: { id: passengerId } });
+      if (!passenger) throw new Error("Passenger not found");
+      return Trip.find({ where: { passengers: { id: passengerId } } });
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la récupération des voyages :",
+        error
+      );
+      throw error;
+    }
+  }
 }

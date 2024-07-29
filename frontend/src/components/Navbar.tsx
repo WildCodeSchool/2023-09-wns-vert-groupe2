@@ -27,7 +27,8 @@ const pages = [
 ];
 const settings = [
   { label: "Mon compte", url: "account" },
-  { label: "Mes trajets", url: "account/journey" },
+  { label: "Mes trajets", url: "account/trips" },
+  { label: "Mes Avis", url: "account/reviews" },
 ];
 
 export default function Navbar() {

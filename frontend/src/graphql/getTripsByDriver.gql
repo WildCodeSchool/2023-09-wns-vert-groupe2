@@ -1,0 +1,14 @@
+query getAllTripsOfDriver($driverId: String!) {
+  getAllTripsOfDriver(driverId: $driverId) {
+    id
+    date
+    price
+    status
+    startLocation
+    stopLocations
+    endLocation
+    numberOfPassengers
+    createdAt
+    updatedAt
+  }
+}

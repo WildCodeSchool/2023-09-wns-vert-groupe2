@@ -1,24 +1,19 @@
-query getTripById($id: String!) {
-  getTripById(id: $id) {
+query getAllTripsOfPassenger($passengerId: String!) {
+  getAllTripsOfPassenger(passengerId: $passengerId) {
     id
     date
     price
     status
-    numberOfPassengers
     startLocation
     stopLocations
     endLocation
     driver {
-      id
+      email
       firstname
       lastname
     }
+    numberOfPassengers
     createdAt
     updatedAt
-    passengers {
-      id
-      firstname
-      lastname
-    }
   }
 }

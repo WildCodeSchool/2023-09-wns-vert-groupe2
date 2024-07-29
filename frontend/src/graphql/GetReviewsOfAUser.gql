@@ -1,0 +1,14 @@
+query GetReviewsOfAUser($userId: String!) {
+  reviewsOfAUser(userId: $userId) {
+    id
+    rating
+    comment
+    type
+    createdAt
+    author {
+      id
+      firstname
+      lastname
+    }
+  }
+}
