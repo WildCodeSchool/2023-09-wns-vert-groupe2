@@ -1,9 +1,27 @@
-import { Resolver, Mutation, Arg, Query, Ctx } from "type-graphql";
+import {
+  Resolver,
+  Mutation,
+  Arg,
+  Query,
+  Ctx,
+  registerEnumType,
+} from "type-graphql";
 import { Trip } from "../entities/trip";
 import { TripInput } from "../inputs/Trip";
 import { TripUpdateInput } from "../inputs/TripUpdate";
 import { UserContext } from "../types/User";
 import { User } from "../entities/user";
+
+import { Between } from "typeorm";
+
+enum SortBy {
+  DATE = "DATE",
+  PRICE = "PRICE",
+}
+
+registerEnumType(SortBy, {
+  name: "SortBy",
+});
 
 @Resolver()
 export class TripResolver {
@@ -218,6 +236,50 @@ export class TripResolver {
         error
       );
       throw error;
+    }
+  }
+
+  @Query(() => [Trip])
+  async searchTrips(
+    @Arg("startLocation") startLocation: string,
+    @Arg("endLocation") endLocation: string,
+    @Arg("date", { nullable: true }) date: Date,
+    @Arg("sortBy", () => [SortBy], { nullable: true }) sortBy: SortBy[]
+  ): Promise<Trip[]> {
+    try {
+      const whereClause: any = {
+        startLocation,
+        endLocation,
+      };
+
+      if (date) {
+        const startDate = new Date(date);
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 1);
+
+        whereClause.date = Between(startDate, endDate);
+      }
+
+      const options: any = { where: whereClause };
+
+      if (sortBy && sortBy.length > 0) {
+        options.order = {};
+        sortBy.forEach((sortCriterion) => {
+          if (sortCriterion === SortBy.DATE) {
+            options.order.date = "ASC";
+          } else if (sortCriterion === SortBy.PRICE) {
+            options.order.price = "ASC";
+          }
+        });
+      }
+
+      const trips = await Trip.find(options);
+      return trips;
+    } catch (error) {
+      console.error("Error occurred while fetching trips:", error);
+      throw new Error("Could not fetch trips. Please try again later.");
     }
   }
 }

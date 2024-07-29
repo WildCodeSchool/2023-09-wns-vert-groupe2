@@ -103,7 +103,7 @@ export class UserAdminResolver {
 
   @Mutation(() => String)
   async deleteUser(
-    @Arg("id") id: number,
+    @Arg("id") id: string,
     @Ctx() ctx: UserContext
   ): Promise<String> {
     checkIfRegisteredOrIsAdmin(ctx.user);
